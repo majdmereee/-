@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المنيو بالذكاء الاصطناعي</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background-color: #f4f6f9; padding: 20px; }
+        .admin-box { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        input, textarea, button { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { background-color: #27ae60; color: white; font-weight: bold; cursor: pointer; border: none; }
+        button:hover { background-color: #219150; }
+        #status { margin-top: 15px; font-weight: bold; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div class="admin-box">
+        <h2>🤖 لوحة إدارة المنيو الذكية</h2>
+        
+        <label>Gemini API Key:</label>
+        <input type="password" id="geminiKey" placeholder="AIzaSy..." />
+
+        <label>GitHub Personal Token:</label>
+        <input type="password" id="githubToken" placeholder="ghp_..." />
+
+        <label>اسم المستخدم ومستودع GitHub (مثال: username/repo):</label>
+        <input type="text" id="repoPath" placeholder="username/my-menu-repo" />
+
+        <hr style="margin: 20px 0;">
+
+        <label>أمر التعديل (اكتب ما تريد للذكاء الاصطناعي):</label>
+        <textarea id="prompt" rows="4" placeholder="مثال: أضف بيتزا ببروني بسعر 8 دولار قسم الوجبات، وغيّر سعر عصير البرتقال إلى 2.5"></textarea>
+
+        <button onclick="processCommand()">تطبيق التعديلات عبر Gemini</button>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function processCommand() {
+            const geminiKey = document.getElementById('geminiKey').value.trim();
+            const githubToken = document.getElementById('githubToken').value.trim();
+            const repoPath = document.getElementById('repoPath').value.trim();
+            const promptText = document.getElementById('prompt').value.trim();
+            const status = document.getElementById('status');
+
+            if (!geminiKey || !githubToken || !repoPath || !promptText) {
+                alert('يرجى تعبئة جميع الحقول المطلوبة!');
+                return;
+            }
+
+            status.innerText = "1️⃣ جاري جلب المنيو الحالي من GitHub...";
+
+            try {
+                // 1. جلب الملف الحالي من GitHub
+                const ghUrl = `https://api.github.com/repos/${repoPath}/contents/menu.json`;
+                const fileRes = await fetch(ghUrl, {
+                    headers: { 'Authorization': `token ${githubToken}` }
+                });
+                const fileData = await fileRes.json();
+                const currentContent = decodeURIComponent(escape(atob(fileData.content)));
+                const sha = fileData.sha;
+
+                status.innerText = "2️⃣ جاري معالجة الأمر بواسطة Gemini...";
+
+                // 2. إرسال الطلب لـ Gemini
+                const systemInstruction = `أنت مدير قاعدة بيانات منيو. قم بتعديل مصفوفة JSON التالية حسب طلب المستخدم. أرجع فقط كود JSON جديد وصحيح بدون أي شرح أو علامات markdown مثل \`\`\`json.`;
+                
+                const aiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: `${systemInstruction}\n\nالمنيو الحالي:\n${currentContent}\n\nالطلب:\n${promptText}` }]
+                        }]
+                    })
+                });
+
+                const aiData = await aiRes.json();
+                let updatedJsonText = aiData.candidates[0].content.parts[0].text.trim();
+                
+                // تنظيف النتيجة لو كانت تحتوي على markdown
+                updatedJsonText = updatedJsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                // التأكد من صحة الـ JSON
+                JSON.parse(updatedJsonText);
+
+                status.innerText = "3️⃣ جاري حفظ المنيو الجديد على GitHub...";
+
+                // 3. تحديث الملف في GitHub
+                const updatedContentEncoded = btoa(unescape(encodeURIComponent(updatedJsonText)));
+                
+                const updateRes = await fetch(ghUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: "تحديث المنيو تلقائياً بواسطة Gemini AI",
+                        content: updatedContentEncoded,
+                        sha: sha
+                    })
+                });
+
+                if (updateRes.ok) {
+                    status.innerText = "✅ تم تحديث المنيو بنجاح! سيظهر للزبائن خلال لحظات.";
+                    document.getElementById('prompt').value = '';
+                } else {
+                    throw new Error("فشل الحفظ على GitHub");
+                }
+
+            } catch (err) {
+                status.innerText = "❌ حدث خطأ: " + err.message;
+            }
+        }
+    </script>
+</body>
+</html>
