@@ -3,171 +3,401 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة المنيو بالذكاء الاصطناعي</title>
+    <title>إدارة المنيو الذكية - محادثة Gemini</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Font Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: system-ui, sans-serif; background-color: #f4f6f9; padding: 20px; }
-        .admin-box { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        input, textarea, button, select { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { background-color: #27ae60; color: white; font-weight: bold; cursor: pointer; border: none; }
-        button:hover { background-color: #219150; }
-        #status { margin-top: 15px; font-weight: bold; white-space: pre-wrap; }
-        .hidden { display: none; }
+        body { font-family: 'Cairo', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
-<body>
-    <div class="admin-box">
-        <h2>🤖 لوحة إدارة المنيو الذكية</h2>
-        
-        <label>Gemini API Key:</label>
-        <input type="password" id="geminiKey" placeholder="AIzaSy..." />
+<body class="bg-slate-100 h-screen flex flex-col overflow-hidden">
 
-        <label>GitHub Personal Token:</label>
-        <input type="password" id="githubToken" placeholder="ghp_..." onchange="autoDetectRepo()" />
-
-        <!-- في حال كان لديك أكثر من مستودع، سيظهر خيار للتحديد تلقائياً دون كتابة -->
-        <div id="repoSelectorContainer" class="hidden">
-            <label>اختر المستودع تلقائياً:</label>
-            <select id="repoSelect"></select>
+    <!-- Top Navigation Header -->
+    <header class="bg-slate-900 text-white px-6 py-3 flex justify-between items-center shadow-md shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg text-lg">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight">إدارة المنيو الذكية</h1>
+                <p class="text-xs text-slate-400">مساعد Gemini للمحتوى التفاعلي</p>
+            </div>
         </div>
 
-        <hr style="margin: 20px 0;">
+        <button onclick="toggleSettingsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm px-4 py-2 rounded-lg flex items-center gap-2 transition border border-slate-700">
+            <i class="fa-solid fa-key text-yellow-400"></i>
+            <span>إعدادات المفاتيح</span>
+        </button>
+    </header>
 
-        <label>أمر التعديل (اكتب ما تريد للذكاء الاصطناعي):</label>
-        <textarea id="prompt" rows="4" placeholder="مثال: أضف بيتزا ببروني بسعر 8 دولار قسم الوجبات، وغيّر سعر عصير البرتقال إلى 2.5"></textarea>
+    <!-- Main Workspace -->
+    <div class="flex-1 flex overflow-hidden p-4 gap-4 max-w-[1600px] w-full mx-auto">
+        
+        <!-- Chat Column (Left/Center) -->
+        <main class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+            
+            <!-- Chat Header -->
+            <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="font-semibold text-slate-700 text-sm">المساعد الشخصي (Gemini AI)</span>
+                </div>
+                <div id="repoStatus" class="text-xs text-slate-500 bg-slate-200 px-3 py-1 rounded-full">
+                    جاري التحقق من المستودع...
+                </div>
+            </div>
 
-        <button onclick="processCommand()">تطبيق التعديلات عبر Gemini</button>
+            <!-- Chat Messages Container -->
+            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto custom-scrollbar space-y-4">
+                <!-- Welcome Message -->
+                <div class="flex gap-3 items-start">
+                    <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 text-sm">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bg-slate-100 text-slate-800 rounded-2xl rounded-tr-none p-4 max-w-[80%] text-sm leading-relaxed border border-slate-200 shadow-sm">
+                        أهلاً بك! أنا مساعدك الذكي لإدارة منيو المطعم. يمكنك أن تطلب مني أي شيء مثل:
+                        <ul class="list-disc list-inside mt-2 space-y-1 text-slate-600">
+                            <li>"أضف بيتزا مارجريتا بسعر 7.50$ في قسم الوجبات"</li>
+                            <li>"غير سعر عصير البرتقال إلى 2.50$"</li>
+                            <li>"احذف قسم المشروبات"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-        <div id="status"></div>
+            <!-- Chat Input Bar -->
+            <div class="p-4 border-t border-slate-100 bg-slate-50">
+                <form id="chatForm" onsubmit="handleSendMessage(event)" class="flex gap-2">
+                    <input type="text" id="userInput" placeholder="اكتب أمرك هنا للذكاء الاصطناعي..." 
+                        class="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                    <button type="submit" id="sendBtn" 
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold text-sm flex items-center gap-2 transition disabled:opacity-50">
+                        <span>إرسال</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Live Menu Preview Sidebar (Right) -->
+        <aside class="w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hidden lg:flex">
+            <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-utensils text-indigo-600"></i>
+                    <span>المعاينة المباشرة للمنيو</span>
+                </h2>
+                <button onclick="fetchCurrentMenu()" class="text-xs text-indigo-600 hover:underline">
+                    <i class="fa-solid fa-rotate-right"></i> تحديث
+                </button>
+            </div>
+
+            <div id="liveMenuContainer" class="flex-1 p-4 overflow-y-auto custom-scrollbar space-y-3">
+                <div class="text-center py-12 text-slate-400 text-sm">جاري تحميل القائمة...</div>
+            </div>
+        </aside>
+
     </div>
 
-    <script>
-        let autoRepoPath = "";
+    <!-- Modal for API Keys -->
+    <div id="settingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-800 text-lg">إعدادات الاتصال المفاتيح</h3>
+                <button onclick="toggleSettingsModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
 
-        // جلب مستودعات المستخدم تلقائياً فور لصق الـ GitHub Token
-        async function autoDetectRepo() {
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Gemini API Key:</label>
+                    <input type="password" id="geminiKey" placeholder="AIzaSy..." 
+                        class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">GitHub Personal Token:</label>
+                    <input type="password" id="githubToken" placeholder="ghp_..." onchange="autoDetectRepo()" 
+                        class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">المستودع المستهدف (Repo):</label>
+                    <select id="repoSelect" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <option value="">أدخل GitHub Token للتعرف تلقائياً</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-2">
+                <button onclick="saveSettings()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg text-sm transition">
+                    حفظ وإغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application JavaScript Logic -->
+    <script>
+        // Global State
+        let currentMenuData = [];
+        let currentFileSha = "";
+        let chatHistory = [];
+
+        // System Prompt for Gemini
+        const getSystemPrompt = (menuJson) => `
+أنت مدير قاعدة بيانات منيو لمطعم، تتحدث وتتفاعل مع الآدمن باللغة العربية.
+المهمة: قم بتعديل مصفوفة JSON المنيو الحالية حسب طلب المستخدم بدقة وذكاء.
+
+القائمة الحالية المعتمدة:
+${JSON.stringify(menuJson, null, 2)}
+
+قواعد الاستجابة الصارمة:
+يجب أن ترجع إجابتك دائمًا بصيغة JSON حصرية فقط، مطابقة للشكل التالي بدقة وبدون أي نص أو كود خارجي:
+{
+  "reply": "رسالة ودية وتفاعلية تشرح للآدمن ما قمت به بالتفصيل.",
+  "updated_menu": [ ... مصفوفة JSON المحدثة بالكامل للوجبات ... ]
+}
+
+ملاحظات:
+- إذا طلب الآدمن استفساراً عاماً لا يتطلب تعديل المنيو، اجعل قيمة "updated_menu" مساوية لـ null.
+- حافظ على حقول العناصر (id, name, category, price, description).
+`;
+
+        // Load Credentials on startup
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedGeminiKey = localStorage.getItem('GEMINI_KEY') || '';
+            const savedGithubToken = localStorage.getItem('GITHUB_TOKEN') || '';
+            const savedRepo = localStorage.getItem('GITHUB_REPO') || '';
+
+            document.getElementById('geminiKey').value = savedGeminiKey;
+            document.getElementById('githubToken').value = savedGithubToken;
+
+            if (!savedGeminiKey || !savedGithubToken) {
+                toggleSettingsModal();
+            } else {
+                autoDetectRepo(savedRepo);
+            }
+        });
+
+        function toggleSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function saveSettings() {
+            const gKey = document.getElementById('geminiKey').value.trim();
+            const ghToken = document.getElementById('githubToken').value.trim();
+            const repo = document.getElementById('repoSelect').value;
+
+            localStorage.setItem('GEMINI_KEY', gKey);
+            localStorage.setItem('GITHUB_TOKEN', ghToken);
+            if(repo) localStorage.setItem('GITHUB_REPO', repo);
+
+            toggleSettingsModal();
+            fetchCurrentMenu();
+        }
+
+        async function autoDetectRepo(defaultSelect = '') {
             const githubToken = document.getElementById('githubToken').value.trim();
-            const status = document.getElementById('status');
-            const repoContainer = document.getElementById('repoSelectorContainer');
             const repoSelect = document.getElementById('repoSelect');
 
             if (!githubToken) return;
 
-            status.innerText = "🔍 جاري جلب مستودعاتك من GitHub تلقائياً...";
-
             try {
-                // جلب بيانات المستخدم والمستودعات
                 const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', {
                     headers: { 'Authorization': `token ${githubToken}` }
                 });
 
-                if (!res.ok) throw new Error("الـ Token غير صحيح أو منتهي الصلاحية");
+                if (!res.ok) throw new Error("مفتاح GitHub Token غير صحيح");
 
                 const repos = await res.json();
-                
-                if (repos.length === 0) {
-                    status.innerText = "❌ لم يتم العثور على أي مستودعات في هذا الحساب.";
-                    return;
-                }
-
-                // تعبئة قائمة المستودعات تلقائياً
                 repoSelect.innerHTML = repos.map(r => `<option value="${r.full_name}">${r.full_name}</option>`).join('');
-                
-                // تحديد أول مستودع افتراضياً
-                autoRepoPath = repos[0].full_name;
-                
-                // إظهار القائمة فقط إذا كان لدى المستخدم أكثر من مستودع
-                if (repos.length > 1) {
-                    repoContainer.classList.remove('hidden');
+
+                const savedRepo = defaultSelect || localStorage.getItem('GITHUB_REPO');
+                if (savedRepo && repos.some(r => r.full_name === savedRepo)) {
+                    repoSelect.value = savedRepo;
                 }
 
-                status.innerText = `✅ تم التعرف على الحساب والمستودع تلقائياً: (${autoRepoPath})`;
-
+                document.getElementById('repoStatus').innerText = `المستودع: ${repoSelect.value}`;
+                fetchCurrentMenu();
             } catch (err) {
-                status.innerText = "❌ خطأ في التعرف التلقائي: " + err.message;
+                document.getElementById('repoStatus').innerText = "خطأ في الاتصال بـ GitHub";
             }
         }
 
-        async function processCommand() {
-            const geminiKey = document.getElementById('geminiKey').value.trim();
-            const githubToken = document.getElementById('githubToken').value.trim();
-            const promptText = document.getElementById('prompt').value.trim();
-            const repoSelect = document.getElementById('repoSelect');
-            const status = document.getElementById('status');
+        // Helper Encoding Functions for Arabic Base64
+        function utf8_to_b64(str) {
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+        }
 
-            // اختيار المستودع المحدد تلقائياً أو من القائمة
-            const selectedRepo = repoSelect.value || autoRepoPath;
+        function b64_to_utf8(str) {
+            return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        }
 
-            if (!geminiKey || !githubToken || !selectedRepo || !promptText) {
-                alert('يرجى وضع المفاتيح وكتابة الأمر المطلوب!');
+        // Fetch menu.json from GitHub
+        async function fetchCurrentMenu() {
+            const token = localStorage.getItem('GITHUB_TOKEN');
+            const repo = document.getElementById('repoSelect').value || localStorage.getItem('GITHUB_REPO');
+
+            if (!token || !repo) return;
+
+            try {
+                const url = `https://api.github.com/repos/${repo}/contents/menu.json`;
+                const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    currentFileSha = data.sha;
+                    const jsonContent = b64_to_utf8(data.content);
+                    currentMenuData = JSON.parse(jsonContent);
+                    renderLiveMenu();
+                }
+            } catch (err) {
+                console.error("خطأ في جلب المنيو:", err);
+            }
+        }
+
+        // Render Live Sidebar Menu
+        function renderLiveMenu() {
+            const container = document.getElementById('liveMenuContainer');
+            if (!currentMenuData || currentMenuData.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs">المنيو فارغ حالياً</div>`;
                 return;
             }
 
-            status.innerText = "1️⃣ جاري جلب المنيو الحالي من GitHub...";
+            container.innerHTML = currentMenuData.map(item => `
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="font-bold text-slate-800">${item.name}</span>
+                        <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">${item.price} $</span>
+                    </div>
+                    <span class="inline-block bg-slate-200 text-slate-600 text-[10px] px-2 py-0.5 rounded mb-1">${item.category || 'عام'}</span>
+                    <p class="text-xs text-slate-500 leading-normal">${item.description || ''}</p>
+                </div>
+            `).join('');
+        }
+
+        // Add Message Bubble to Chat
+        function appendChatMessage(role, text, statusBadge = null) {
+            const container = document.getElementById('chatMessages');
+            const isUser = role === 'user';
+
+            const msgHtml = `
+                <div class="flex gap-3 items-start ${isUser ? 'flex-row-reverse' : ''}">
+                    <div class="w-8 h-8 rounded-full ${isUser ? 'bg-slate-800' : 'bg-indigo-600'} text-white flex items-center justify-center shrink-0 text-sm">
+                        <i class="fa-solid ${isUser ? 'fa-user' : 'fa-robot'}"></i>
+                    </div>
+                    <div class="${isUser ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200'} rounded-2xl p-4 max-w-[80%] text-sm leading-relaxed shadow-sm">
+                        ${text}
+                        ${statusBadge ? `<div class="mt-2 text-xs font-semibold text-emerald-600 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> ${statusBadge}</div>` : ''}
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', msgHtml);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Handle Form Submission / Chat
+        async function handleSendMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('userInput');
+            const userMsg = input.value.trim();
+            if (!userMsg) return;
+
+            const geminiKey = localStorage.getItem('GEMINI_KEY');
+            const token = localStorage.getItem('GITHUB_TOKEN');
+            const repo = document.getElementById('repoSelect').value || localStorage.getItem('GITHUB_REPO');
+
+            if (!geminiKey || !token || !repo) {
+                alert("يرجى التأكد من ضبط المفاتيح والمستودع أولاً من زر الإعدادات.");
+                return;
+            }
+
+            // Display User Message
+            appendChatMessage('user', userMsg);
+            input.value = '';
+
+            // Loading state
+            document.getElementById('sendBtn').disabled = true;
 
             try {
-                // 1. جلب الملف الحالي من GitHub
-                const ghUrl = `https://api.github.com/repos/${selectedRepo}/contents/menu.json`;
-                const fileRes = await fetch(ghUrl, {
-                    headers: { 'Authorization': `token ${githubToken}` }
-                });
-
-                if (!fileRes.ok) throw new Error("لم يتم العثور على ملف menu.json داخل المستودع المSelected");
-
-                const fileData = await fileRes.json();
-                const currentContent = decodeURIComponent(escape(atob(fileData.content)));
-                const sha = fileData.sha;
-
-                status.innerText = "2️⃣ جاري معالجة الأمر بواسطة Gemini...";
-
-                // 2. إرسال الطلب لـ Gemini
-                const systemInstruction = `أنت مدير قاعدة بيانات منيو. قم بتعديل مصفوفة JSON التالية حسب طلب المستخدم. أرجع فقط كود JSON جديد وصحيح بدون أي شرح أو علامات markdown مثل \`\`\`json.`;
+                // Prepare Gemini Chat Call
+                const systemInstructions = getSystemPrompt(currentMenuData);
                 
+                chatHistory.push({ role: 'user', parts: [{ text: userMsg }] });
+
+                const payload = {
+                    contents: [
+                        { role: 'user', parts: [{ text: systemInstructions }] },
+                        ...chatHistory
+                    ]
+                };
+
                 const aiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: `${systemInstruction}\n\nالمنيو الحالي:\n${currentContent}\n\nالطلب:\n${promptText}` }]
-                        }]
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 const aiData = await aiRes.json();
-                let updatedJsonText = aiData.candidates[0].content.parts[0].text.trim();
-                
-                // تنظيف النتيجة من أي مارك داون
-                updatedJsonText = updatedJsonText.replace(/```json/g, '').replace(/```/g, '').trim();
 
-                // التأكد من صحة الـ JSON
-                JSON.parse(updatedJsonText);
+                if (aiData.error) throw new Error(aiData.error.message);
 
-                status.innerText = "3️⃣ جاري حفظ المنيو الجديد على GitHub...";
+                let responseText = aiData.candidates[0].content.parts[0].text.trim();
+                responseText = responseText.replace(/
+```json/g, '').replace(/```/g, '').trim();
 
-                // 3. تحديث الملف في GitHub
-                const updatedContentEncoded = btoa(unescape(encodeURIComponent(updatedJsonText)));
-                
-                const updateRes = await fetch(ghUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: "تحديث المنيو تلقائياً بواسطة Gemini AI",
-                        content: updatedContentEncoded,
-                        sha: sha
-                    })
-                });
+                const parsedResponse = JSON.parse(responseText);
+                chatHistory.push({ role: 'model', parts: [{ text: responseText }] });
 
-                if (updateRes.ok) {
-                    status.innerText = "✅ تم تحديث المنيو بنجاح! سيظهر للزبائن خلال لحظات.";
-                    document.getElementById('prompt').value = '';
-                } else {
-                    throw new Error("فشل الحفظ على GitHub");
+                let saveBadge = null;
+
+                // Check if Menu was updated
+                if (parsedResponse.updated_menu && Array.isArray(parsedResponse.updated_menu)) {
+                    currentMenuData = parsedResponse.updated_menu;
+                    renderLiveMenu();
+
+                    // Push updated menu to GitHub
+                    const updatedContentB64 = utf8_to_b64(JSON.stringify(currentMenuData, null, 2));
+                    const ghUrl = `https://api.github.com/repos/${repo}/contents/menu.json`;
+
+                    const putRes = await fetch(ghUrl, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: `تحديث المنيو عبر Gemini: ${userMsg.substring(0, 30)}`,
+                            content: updatedContentB64,
+                            sha: currentFileSha
+                        })
+                    });
+
+                    if (putRes.ok) {
+                        const putData = await putRes.json();
+                        currentFileSha = putData.content.sha;
+                        saveBadge = "تم الحفظ والتحديث على GitHub بنجاح!";
+                    } else {
+                        throw new Error("فشل الحفظ على GitHub.");
+                    }
                 }
 
+                // Append Gemini Response
+                appendChatMessage('model', parsedResponse.reply, saveBadge);
+
             } catch (err) {
-                status.innerText = "❌ حدث خطأ: " + err.message;
+                appendChatMessage('model', `❌ حدث خطأ أثناء المعالجة: ${err.message}`);
+            } finally {
+                document.getElementById('sendBtn').disabled = false;
             }
         }
     </script>
