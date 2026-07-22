@@ -7,10 +7,11 @@
     <style>
         body { font-family: system-ui, sans-serif; background-color: #f4f6f9; padding: 20px; }
         .admin-box { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        input, textarea, button { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        input, textarea, button, select { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         button { background-color: #27ae60; color: white; font-weight: bold; cursor: pointer; border: none; }
         button:hover { background-color: #219150; }
         #status { margin-top: 15px; font-weight: bold; white-space: pre-wrap; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -21,10 +22,13 @@
         <input type="password" id="geminiKey" placeholder="AIzaSy..." />
 
         <label>GitHub Personal Token:</label>
-        <input type="password" id="githubToken" placeholder="ghp_..." />
+        <input type="password" id="githubToken" placeholder="ghp_..." onchange="autoDetectRepo()" />
 
-        <label>اسم المستخدم ومستودع GitHub (مثال: username/repo):</label>
-        <input type="text" id="repoPath" placeholder="username/my-menu-repo" />
+        <!-- في حال كان لديك أكثر من مستودع، سيظهر خيار للتحديد تلقائياً دون كتابة -->
+        <div id="repoSelectorContainer" class="hidden">
+            <label>اختر المستودع تلقائياً:</label>
+            <select id="repoSelect"></select>
+        </div>
 
         <hr style="margin: 20px 0;">
 
@@ -37,15 +41,64 @@
     </div>
 
     <script>
+        let autoRepoPath = "";
+
+        // جلب مستودعات المستخدم تلقائياً فور لصق الـ GitHub Token
+        async function autoDetectRepo() {
+            const githubToken = document.getElementById('githubToken').value.trim();
+            const status = document.getElementById('status');
+            const repoContainer = document.getElementById('repoSelectorContainer');
+            const repoSelect = document.getElementById('repoSelect');
+
+            if (!githubToken) return;
+
+            status.innerText = "🔍 جاري جلب مستودعاتك من GitHub تلقائياً...";
+
+            try {
+                // جلب بيانات المستخدم والمستودعات
+                const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', {
+                    headers: { 'Authorization': `token ${githubToken}` }
+                });
+
+                if (!res.ok) throw new Error("الـ Token غير صحيح أو منتهي الصلاحية");
+
+                const repos = await res.json();
+                
+                if (repos.length === 0) {
+                    status.innerText = "❌ لم يتم العثور على أي مستودعات في هذا الحساب.";
+                    return;
+                }
+
+                // تعبئة قائمة المستودعات تلقائياً
+                repoSelect.innerHTML = repos.map(r => `<option value="${r.full_name}">${r.full_name}</option>`).join('');
+                
+                // تحديد أول مستودع افتراضياً
+                autoRepoPath = repos[0].full_name;
+                
+                // إظهار القائمة فقط إذا كان لدى المستخدم أكثر من مستودع
+                if (repos.length > 1) {
+                    repoContainer.classList.remove('hidden');
+                }
+
+                status.innerText = `✅ تم التعرف على الحساب والمستودع تلقائياً: (${autoRepoPath})`;
+
+            } catch (err) {
+                status.innerText = "❌ خطأ في التعرف التلقائي: " + err.message;
+            }
+        }
+
         async function processCommand() {
             const geminiKey = document.getElementById('geminiKey').value.trim();
             const githubToken = document.getElementById('githubToken').value.trim();
-            const repoPath = document.getElementById('repoPath').value.trim();
             const promptText = document.getElementById('prompt').value.trim();
+            const repoSelect = document.getElementById('repoSelect');
             const status = document.getElementById('status');
 
-            if (!geminiKey || !githubToken || !repoPath || !promptText) {
-                alert('يرجى تعبئة جميع الحقول المطلوبة!');
+            // اختيار المستودع المحدد تلقائياً أو من القائمة
+            const selectedRepo = repoSelect.value || autoRepoPath;
+
+            if (!geminiKey || !githubToken || !selectedRepo || !promptText) {
+                alert('يرجى وضع المفاتيح وكتابة الأمر المطلوب!');
                 return;
             }
 
@@ -53,10 +106,13 @@
 
             try {
                 // 1. جلب الملف الحالي من GitHub
-                const ghUrl = `https://api.github.com/repos/${repoPath}/contents/menu.json`;
+                const ghUrl = `https://api.github.com/repos/${selectedRepo}/contents/menu.json`;
                 const fileRes = await fetch(ghUrl, {
                     headers: { 'Authorization': `token ${githubToken}` }
                 });
+
+                if (!fileRes.ok) throw new Error("لم يتم العثور على ملف menu.json داخل المستودع المSelected");
+
                 const fileData = await fileRes.json();
                 const currentContent = decodeURIComponent(escape(atob(fileData.content)));
                 const sha = fileData.sha;
@@ -79,7 +135,7 @@
                 const aiData = await aiRes.json();
                 let updatedJsonText = aiData.candidates[0].content.parts[0].text.trim();
                 
-                // تنظيف النتيجة لو كانت تحتوي على markdown
+                // تنظيف النتيجة من أي مارك داون
                 updatedJsonText = updatedJsonText.replace(/```json/g, '').replace(/```/g, '').trim();
 
                 // التأكد من صحة الـ JSON
