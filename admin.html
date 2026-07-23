@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الإدارة الشامل | Full-Stack AI</title>
+    <title>نظام الإدارة الشامل | Gemini 3.6 Flash</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: #f8fafc; }
+        body { font-family: 'Tajawal', sans-serif; background: #0f172a; color: #f8fafc; }
         .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #8b5cf6; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #0ea5e9; border-radius: 4px; }
         .toast { transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        .loader { border-top-color: #8b5cf6; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+        .loader { border-top-color: #0ea5e9; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -22,52 +22,51 @@
     <!-- Header -->
     <header class="glass-panel px-6 py-4 flex justify-between items-center z-10 shadow-2xl shrink-0">
         <div class="flex items-center gap-4">
-            <div class="bg-violet-600 p-3 rounded-xl shadow-lg shadow-violet-500/30">
+            <div class="bg-sky-600 p-3 rounded-xl shadow-lg shadow-sky-500/30">
                 <i class="fa-solid fa-code text-2xl"></i>
             </div>
             <div>
-                <h1 class="font-black text-2xl bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-400">Full-Stack AI Admin</h1>
-                <p class="text-xs text-slate-400 tracking-wider">التحكم الكامل بالبيانات (JSON) والتصميم (HTML/CSS)</p>
+                <h1 class="font-black text-2xl bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-400">Full-Stack Interactions API</h1>
+                <p class="text-xs text-slate-400 font-medium mt-1">يعمل عبر نقطة النهاية (gemini-3.6-flash)</p>
             </div>
         </div>
         <div class="flex gap-3">
-            <div id="repoStatusIndicator" class="hidden md:flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-lg text-xs font-mono border border-slate-700">
-                <i class="fa-solid fa-server text-emerald-400"></i>
+            <div id="repoStatusIndicator" class="hidden md:flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-lg text-xs border border-slate-700">
+                <i class="fa-solid fa-server text-sky-400"></i>
                 <span id="filesStatus" class="text-slate-300">جاري فحص الملفات...</span>
             </div>
-            <button onclick="toggleSettings()" class="bg-slate-700 hover:bg-slate-600 px-5 py-2 rounded-lg font-semibold transition flex items-center gap-2">
+            <button onclick="toggleSettings()" class="bg-slate-700 hover:bg-slate-600 px-5 py-2 rounded-lg font-bold transition flex items-center gap-2">
                 <i class="fa-solid fa-gear"></i> النظام
             </button>
         </div>
     </header>
 
     <!-- Main Workspace -->
-    <div class="flex-1 flex overflow-hidden p-4 gap-4 max-w-[1800px] w-full mx-auto relative">
+    <div class="flex-1 flex overflow-hidden p-4 gap-4 max-w-[1400px] w-full mx-auto relative">
         
         <!-- AI Chat Console -->
         <main class="flex-1 glass-panel rounded-2xl flex flex-col overflow-hidden shadow-2xl">
             <div class="p-4 border-b border-slate-700 bg-slate-800/50 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-violet-500"></span></span>
-                    <span class="font-bold text-sm">مهندس البرمجيات الذكي</span>
+                    <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span></span>
+                    <span class="font-bold text-sm">مهندس البرمجيات (Interactions)</span>
                 </div>
             </div>
 
             <!-- Chat History -->
             <div id="chatMessages" class="flex-1 p-6 overflow-y-auto custom-scrollbar space-y-6">
                 <div class="flex gap-4 items-start">
-                    <div class="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/20">
-                        <i class="fa-solid fa-terminal"></i>
+                    <div class="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center shrink-0 shadow-lg shadow-sky-500/20">
+                        <i class="fa-solid fa-robot"></i>
                     </div>
                     <div class="bg-slate-700/50 border border-slate-600 rounded-2xl rounded-tr-none p-5 max-w-[85%] shadow-md">
-                        <p class="leading-relaxed">أهلاً بك أيها المدير. أنا الآن أمتلك صلاحيات <b>Full-Stack</b>.
+                        <p class="leading-relaxed font-medium">أهلاً بك أيها المدير. أنا متصل الآن بأحدث أنظمة <b>Gemini Interactions API</b>.
                         <br><br>
-                        💡 <b>أمثلة لما يمكنك طلبه الآن:</b>
-                        <ul class="list-disc list-inside mt-2 text-slate-300 space-y-1">
-                            <li>"غير لون خلفية الموقع الأساسي إلى الأسود (Dark Mode)"</li>
-                            <li>"أضف شريط إعلاني أعلى الموقع مكتوب فيه: خصم 20% اليوم"</li>
-                            <li>"أضف قسم جديد للحلويات في المنيو مع 3 أصناف"</li>
-                            <li>"غير خط الموقع إلى خط Cairo من Google Fonts"</li>
+                        💡 <b>أنا أتحكم بالتصميم (HTML) والبيانات (JSON). اطلب مني:</b>
+                        <ul class="list-disc list-inside mt-2 text-slate-300 space-y-2 text-sm">
+                            <li>"غير لون زر الطلب في الموقع إلى الأحمر"</li>
+                            <li>"أضف 3 وجبات جديدة في قسم المشاوي"</li>
+                            <li>أو ارفع لي صورة منيو ورقي وسأقوم بإضافة الوجبات منه مباشرة!</li>
                         </ul>
                         </p>
                     </div>
@@ -77,13 +76,22 @@
             <!-- Input Area -->
             <div class="p-4 border-t border-slate-700 bg-slate-800/80">
                 <form id="chatForm" class="flex flex-col gap-3">
+                    <!-- Image Preview Area -->
+                    <div id="imagePreviewContainer" class="hidden flex gap-2 overflow-x-auto pb-2 custom-scrollbar"></div>
+                    
                     <div class="flex gap-2">
-                        <input type="text" id="userInput" placeholder="اطلب تعديل في التصميم أو البيانات..." 
-                            class="flex-1 bg-slate-900 border border-slate-600 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-violet-500 text-white placeholder-slate-500 transition">
+                        <!-- Image Upload Button -->
+                        <label class="bg-slate-700 hover:bg-slate-600 text-slate-300 w-12 flex items-center justify-center rounded-xl cursor-pointer transition border border-slate-600" title="إرفاق صورة">
+                            <i class="fa-solid fa-image"></i>
+                            <input type="file" id="imageInput" accept="image/*" class="hidden" multiple onchange="handleImageSelection(event)">
+                        </label>
+
+                        <input type="text" id="userInput" placeholder="اطلب تعديلاً برمجياً، أو إضافات للمنيو..." 
+                            class="flex-1 bg-slate-900 border border-slate-600 rounded-xl px-5 py-3 text-sm font-medium focus:outline-none focus:border-sky-500 text-white placeholder-slate-500 transition">
                         
-                        <button type="submit" id="sendBtn" class="bg-violet-600 hover:bg-violet-500 text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition shadow-lg shadow-violet-600/30 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span>تنفيذ شامل</span>
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <button type="submit" id="sendBtn" class="bg-sky-600 hover:bg-sky-500 text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition shadow-lg shadow-sky-600/30 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span>تنفيذ</span>
+                            <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </div>
                 </form>
@@ -100,47 +108,47 @@
             </div>
             <div class="space-y-5">
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-2">Gemini API Key:</label>
-                    <input type="password" id="geminiKey" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:border-violet-500 outline-none text-white font-mono">
+                    <label class="block text-sm font-bold text-slate-400 mb-2">Gemini API Key:</label>
+                    <input type="password" id="geminiKey" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:border-sky-500 outline-none text-white font-mono">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-2">GitHub PAT:</label>
-                    <input type="password" id="githubToken" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:border-violet-500 outline-none text-white font-mono" onchange="autoDetectRepo()">
+                    <label class="block text-sm font-bold text-slate-400 mb-2">GitHub Personal Token:</label>
+                    <input type="password" id="githubToken" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:border-sky-500 outline-none text-white font-mono" onchange="autoDetectRepo()">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-2">المستودع (Repo):</label>
-                    <select id="repoSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:border-violet-500 outline-none text-white cursor-pointer">
+                    <label class="block text-sm font-bold text-slate-400 mb-2">المستودع (Repository):</label>
+                    <select id="repoSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:border-sky-500 outline-none text-white cursor-pointer font-sans">
                         <option value="">أدخل GitHub Token للبحث التلقائي</option>
                     </select>
                 </div>
             </div>
-            <button onclick="saveSettings()" class="w-full mt-8 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold py-3 rounded-lg shadow-lg shadow-violet-500/25 transition">
-                تهيئة النواة
+            <button onclick="saveSettings()" class="w-full mt-8 bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-lg shadow-lg shadow-sky-500/25 transition">
+                حفظ وإغلاق
             </button>
         </div>
     </div>
 
+    <!-- Toast Notification System -->
     <div id="toastContainer" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2"></div>
 
     <script>
-        // --- Core System State (Full-Stack) ---
+        // --- Core System State (Full-Stack + Interactions) ---
         let currentMenuData = [];
         let currentMenuSha = "";
-        
         let currentHtmlData = "";
         let currentHtmlSha = "";
-        
         let previousInteractionId = null; 
+        let selectedImagesBase64 = [];
 
         // --- Utility Functions ---
         const utf8_to_b64 = str => btoa(unescape(encodeURIComponent(str)));
         const b64_to_utf8 = str => decodeURIComponent(escape(atob(str)));
         
         const showToast = (msg, type = 'info') => {
-            const colors = { success: 'bg-emerald-600', error: 'bg-red-600', info: 'bg-blue-600' };
+            const colors = { success: 'bg-emerald-600', error: 'bg-red-600', info: 'bg-sky-600' };
             const icons = { success: 'fa-check-circle', error: 'fa-triangle-exclamation', info: 'fa-circle-info' };
             const toast = document.createElement('div');
-            toast.className = `${colors[type]} text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-semibold toast translate-y-10 opacity-0`;
+            toast.className = `${colors[type]} text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-bold toast translate-y-10 opacity-0`;
             toast.innerHTML = `<i class="fa-solid ${icons[type]} text-lg"></i><span>${msg}</span>`;
             document.getElementById('toastContainer').appendChild(toast);
             requestAnimationFrame(() => { toast.classList.remove('translate-y-10', 'opacity-0'); });
@@ -152,7 +160,7 @@
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('chatForm').addEventListener('submit', handleFullStackExecution);
+            document.getElementById('chatForm').addEventListener('submit', handleExecution);
             const [savedGemini, savedGit, savedRepo] = ['GEMINI_KEY', 'GITHUB_TOKEN', 'GITHUB_REPO'].map(k => localStorage.getItem(k) || '');
             document.getElementById('geminiKey').value = savedGemini;
             document.getElementById('githubToken').value = savedGit;
@@ -180,7 +188,7 @@
             if (repo) localStorage.setItem('GITHUB_REPO', repo);
             toggleSettings();
             fetchRepositoryData();
-            showToast('تمت تهيئة النواة بنجاح', 'success');
+            showToast('تم حفظ الإعدادات', 'success');
         }
 
         async function autoDetectRepo(defaultSelect = '') {
@@ -202,7 +210,7 @@
             const repo = document.getElementById('repoSelect').value || localStorage.getItem('GITHUB_REPO');
             if (!token || !repo) return;
 
-            document.getElementById('filesStatus').innerText = "جاري المزامنة...";
+            document.getElementById('filesStatus').innerText = "جاري مزامنة الملفات...";
 
             try {
                 // Fetch JSON
@@ -221,31 +229,62 @@
                     currentHtmlData = b64_to_utf8(data.content);
                 }
 
-                document.getElementById('filesStatus').innerText = `تمت المزامنة (JSON & HTML)`;
-                document.getElementById('filesStatus').classList.add('text-emerald-400');
+                document.getElementById('filesStatus').innerText = `تم ربط الملفات (JSON & HTML)`;
+                document.getElementById('filesStatus').classList.add('text-sky-400');
             } catch (err) {
-                document.getElementById('filesStatus').innerText = "فشل مزامنة الملفات";
+                document.getElementById('filesStatus').innerText = "فشل في جلب الملفات من المستودع";
                 document.getElementById('filesStatus').classList.replace('text-slate-300', 'text-red-400');
             }
         }
 
+        // --- Image Selection (Vision) ---
+        function handleImageSelection(event) {
+            const files = event.target.files;
+            const container = document.getElementById('imagePreviewContainer');
+            if(files.length > 0) container.classList.remove('hidden');
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const base64String = e.target.result.split(',')[1];
+                    const mimeType = file.type;
+                    
+                    // Format required by Interactions API
+                    selectedImagesBase64.push({ type: "image", data: base64String, mime_type: mimeType });
+                    
+                    const img = document.createElement('div');
+                    img.className = "relative w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-slate-600";
+                    img.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition cursor-pointer" onclick="this.parentElement.remove(); selectedImagesBase64.pop()">
+                            <i class="fa-solid fa-trash text-red-400 text-xs"></i>
+                        </div>
+                    `;
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
+        }
+
+        // --- UI Update Function ---
         function appendMsg(role, content, badges = []) {
             const box = document.getElementById('chatMessages');
             const isUser = role === 'user';
             
             let badgesHtml = '';
             if (badges.length > 0) {
-                badgesHtml = `<div class="mt-3 pt-3 border-t border-violet-500/30 flex gap-2 flex-wrap">` + 
-                    badges.map(b => `<span class="text-[11px] font-bold text-violet-300 bg-violet-900/50 px-2 py-1 rounded border border-violet-500/30"><i class="fa-solid fa-check"></i> ${b}</span>`).join('') + 
+                badgesHtml = `<div class="mt-3 pt-3 border-t border-sky-500/30 flex gap-2 flex-wrap">` + 
+                    badges.map(b => `<span class="text-[11px] font-bold text-sky-300 bg-sky-900/50 px-2 py-1 rounded border border-sky-500/30"><i class="fa-solid fa-check"></i> ${b}</span>`).join('') + 
                     `</div>`;
             }
 
             const html = `
                 <div class="flex gap-4 items-start ${isUser ? 'flex-row-reverse' : ''}">
-                    <div class="w-10 h-10 rounded-xl ${isUser ? 'bg-slate-700' : 'bg-violet-600'} flex items-center justify-center shrink-0 shadow-lg">
-                        <i class="fa-solid ${isUser ? 'fa-user' : 'fa-wand-magic-sparkles'} text-white"></i>
+                    <div class="w-10 h-10 rounded-xl ${isUser ? 'bg-slate-700' : 'bg-sky-600'} flex items-center justify-center shrink-0 shadow-lg font-bold">
+                        <i class="fa-solid ${isUser ? 'fa-user' : 'fa-code'} text-white"></i>
                     </div>
-                    <div class="${isUser ? 'bg-blue-600 text-white' : 'bg-slate-700/80 text-slate-200 border-slate-600'} border rounded-2xl ${isUser ? 'rounded-tl-none' : 'rounded-tr-none'} p-5 max-w-[85%] shadow-md text-sm leading-relaxed whitespace-pre-wrap">
+                    <div class="${isUser ? 'bg-indigo-600 text-white' : 'bg-slate-700/80 text-slate-200 border-slate-600'} border rounded-2xl ${isUser ? 'rounded-tl-none' : 'rounded-tr-none'} p-5 max-w-[85%] shadow-md text-sm leading-relaxed whitespace-pre-wrap font-medium">
                         ${content}
                         ${badgesHtml}
                     </div>
@@ -254,47 +293,55 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        // --- Core Execution AI Engine (Full-Stack) ---
-        async function handleFullStackExecution(e) {
+        // --- Core Interactions API Engine ---
+        async function handleExecution(e) {
             e.preventDefault();
             const inputEl = document.getElementById('userInput');
             const btnEl = document.getElementById('sendBtn');
             const prompt = inputEl.value.trim();
-            if (!prompt) return;
+            
+            if (!prompt && selectedImagesBase64.length === 0) return;
 
             const [geminiKey, ghToken, repo] = ['GEMINI_KEY', 'GITHUB_TOKEN', 'GITHUB_REPO'].map(k => localStorage.getItem(k));
             if (!geminiKey || !ghToken || !repo) return showToast('مفاتيح النظام مفقودة', 'error');
 
-            appendMsg('user', prompt);
+            let userDisplayMsg = prompt;
+            if (selectedImagesBase64.length > 0) userDisplayMsg += `\n[تم إرفاق ${selectedImagesBase64.length} صورة]`;
+            appendMsg('user', userDisplayMsg);
+            
             inputEl.value = '';
             btnEl.disabled = true;
-            btnEl.innerHTML = `<div class="loader w-4 h-4 rounded-full border-2 border-slate-300"></div> جاري التشفير`;
+            btnEl.innerHTML = `<div class="loader w-4 h-4 rounded-full border-2 border-slate-300"></div> جاري المعالجة`;
+            document.getElementById('imagePreviewContainer').innerHTML = '';
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
 
             try {
-                // 1. System Prompt (The Full-Stack Brain)
+                // 1. Prepare Interactions API Inputs
                 const systemInstruction = `أنت مهندس برمجيات (Full-Stack) متكامل وتدير موقعاً لمطعم.
-أمامك الآن قاعدة البيانات (menu.json) وكود واجهة الموقع (index.html).
+أمامك الآن قاعدة البيانات الحالية (menu.json) وكود واجهة الموقع (index.html).
 
 [قاعدة البيانات الحالية]:
 ${JSON.stringify(currentMenuData)}
 
-[كود واجهة الموقع الحالي - index.html]:
+[كود واجهة الموقع الحالي]:
 ${currentHtmlData}
 
-طلب المستخدم: "${prompt}"
+تعليماتك:
+1. نفذ طلبات المستخدم بناءً على البيانات والتصميم.
+2. إذا أرسل المستخدم صورة (مثل منيو), استخرج منها البيانات وأضفها لـ menu.json.
+3. يجب أن تُرجع النتيجة بصيغة JSON حصرية، لا تكتب أي نص خارج הJSON أبداً.`;
 
-تعليمات صارمة:
-- إذا طلب المستخدم تعديل التصميم، قم بتعديل كود الـ HTML/CSS/JS بذكاء وإبداع عالي، وأرجع الكود كاملاً في حقل "updated_html".
-- إذا طلب المستخدم تعديل الوجبات، قم بتعديل المصفوفة وأرجعها في "updated_menu".
-- إذا كان التعديل يشملهما معاً، أرجعهما معاً.
-- إذا لم يطلب تعديل أحدهما، أرجع قيمته كـ null لتوفير الموارد.`;
+                const aiInput = [];
+                aiInput.push({ type: "text", text: systemInstruction });
+                if (prompt) aiInput.push({ type: "text", text: prompt });
+                if (selectedImagesBase64.length > 0) aiInput.push(...selectedImagesBase64);
 
-                // 2. Strict Response Format (JSON Schema for Multiple Files)
+                // 2. Structured Output Configuration for Interactions API
                 const requestBody = {
                     model: "gemini-3.6-flash",
-                    input: [{ type: "text", text: systemInstruction }],
+                    input: aiInput,
                     response_format: {
-                        type: "object",
+                        type: "text",
                         mime_type: "application/json",
                         schema: {
                             type: "object",
@@ -302,35 +349,62 @@ ${currentHtmlData}
                                 reply: { type: "string", description: "شرح ودود لما تم تعديله" },
                                 updated_menu: { 
                                     type: "array", 
-                                    description: "مصفوفة المنيو المحدثة (null إذا لم يتم التعديل)",
+                                    description: "مصفوفة المنيو المحدثة (ضعها null إذا لم يُطلب تعديل الوجبات)",
                                     items: { type: "object", properties: { id: {type: "integer"}, name: {type: "string"}, category: {type: "string"}, price: {type: "string"}, description: {type: "string"} } }
                                 },
                                 updated_html: {
                                     type: "string",
-                                    description: "كود HTML/CSS/JS الكامل والمحدث لملف index.html (null إذا لم يتم التعديل)"
+                                    description: "كود HTML/CSS/JS المحدث (ضعها null إذا لم يُطلب تعديل التصميم)"
                                 }
                             }
                         }
                     }
                 };
 
-                if (previousInteractionId) requestBody.previous_interaction_id = previousInteractionId;
+                // Add state history ID if conversation is ongoing
+                if (previousInteractionId) {
+                    requestBody.previous_interaction_id = previousInteractionId;
+                }
 
-                // 3. Call AI
+                // 3. Network Request to Interactions API
                 const url = `https://generativelanguage.googleapis.com/v1beta/interactions?key=${geminiKey}`;
-                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
                 const data = await res.json();
                 
-                if (!res.ok) throw new Error(data.error?.message || "فشل الاتصال");
+                if (!res.ok) throw new Error(data.error?.message || "فشل الاتصال بـ API");
+
+                // Save Interaction ID
                 if (data.id) previousInteractionId = data.id;
 
-                let modelOutputText = data.steps?.find(s => s.type === 'model_output')?.content?.find(c => c.type === 'text')?.text;
-                if (!modelOutputText) throw new Error("استجابة فارغة");
+                // 4. Parse the `steps` array based on Interactions API structure
+                let replyText = "";
+                if (data.steps && data.steps.length > 0) {
+                    for (const step of data.steps) {
+                        if (step.type === "model_output" && step.content) {
+                            for (const item of step.content) {
+                                if (item.type === "text") {
+                                    replyText += item.text;
+                                }
+                            }
+                        }
+                    }
+                }
 
-                const parsedResult = JSON.parse(modelOutputText);
+                if (!replyText) throw new Error("استجابة الذكاء الاصطناعي كانت فارغة.");
+
+                // 5. Extract JSON carefully
+                const jsonMatch = replyText.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error("لم يتم إرجاع صيغة JSON صالحة.");
+                
+                const parsedResult = JSON.parse(jsonMatch[0]);
                 let updateBadges = [];
 
-                // 4. Update menu.json on GitHub
+                // 6. Update menu.json on GitHub
                 if (parsedResult.updated_menu && Array.isArray(parsedResult.updated_menu)) {
                     if (JSON.stringify(currentMenuData) !== JSON.stringify(parsedResult.updated_menu)) {
                         currentMenuData = parsedResult.updated_menu;
@@ -338,18 +412,18 @@ ${currentHtmlData}
                             method: 'PUT',
                             headers: { 'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                message: `Gemini Data Update: ${prompt.substring(0, 20)}`,
+                                message: `Gemini JSON Update: ${prompt.substring(0, 20)}`,
                                 content: utf8_to_b64(JSON.stringify(currentMenuData, null, 2)),
                                 sha: currentMenuSha
                             })
                         });
                         const ghData = await ghRes.json();
                         currentMenuSha = ghData.content.sha;
-                        updateBadges.push("تم تحديث البيانات (menu.json)");
+                        updateBadges.push("تم تعديل قاعدة البيانات 🗄️");
                     }
                 }
 
-                // 5. Update index.html on GitHub
+                // 7. Update index.html on GitHub
                 if (parsedResult.updated_html && typeof parsedResult.updated_html === 'string') {
                     if (currentHtmlData !== parsedResult.updated_html) {
                         currentHtmlData = parsedResult.updated_html;
@@ -364,21 +438,24 @@ ${currentHtmlData}
                         });
                         const ghDataHtml = await ghResHtml.json();
                         currentHtmlSha = ghDataHtml.content.sha;
-                        updateBadges.push("تم تحديث تصميم الواجهة (index.html)");
+                        updateBadges.push("تم تعديل واجهة الموقع 🎨");
                     }
                 }
 
-                if (updateBadges.length === 0) updateBadges.push("تم الرد (بدون تعديلات برمجية)");
+                if (updateBadges.length === 0) updateBadges.push("تم الرد بنجاح (بدون تغييرات برمجية)");
 
                 appendMsg('model', parsedResult.reply, updateBadges);
-                if (updateBadges.length > 0) showToast('اكتمل تنفيذ الأوامر بنجاح', 'success');
+                if (updateBadges.length > 0 && updateBadges[0] !== "تم الرد بنجاح (بدون تغييرات برمجية)") {
+                    showToast('تم تطبيق التعديلات ورفعها', 'success');
+                }
 
             } catch (err) {
-                appendMsg('model', `❌ فشل حرج في النظام: ${err.message}`);
+                appendMsg('model', `❌ فشل في التنفيذ: ${err.message}`);
                 showToast('حدث خطأ', 'error');
             } finally {
+                selectedImagesBase64 = []; // Reset images
                 btnEl.disabled = false;
-                btnEl.innerHTML = `<span>تنفيذ شامل</span><i class="fa-solid fa-wand-magic-sparkles"></i>`;
+                btnEl.innerHTML = `<span>تنفيذ</span><i class="fa-solid fa-paper-plane"></i>`;
             }
         }
     </script>
