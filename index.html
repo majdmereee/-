@@ -1,1 +1,242 @@
-null
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة الطعام</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d97706;
+            --primary-hover: #b45309;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            direction: rtl;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        .search-container {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+        }
+        .search-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+        .categories-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .category-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 10px 22px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+        }
+        .category-btn:hover, .category-btn.active {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .card-price {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+        .card-category {
+            display: inline-block;
+            font-size: 0.85rem;
+            color: var(--primary);
+            background-color: #fffbeb;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            width: fit-content;
+        }
+        .card-description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>قائمة الطعام</h1>
+            <p>اختر ما تشتهي من تشكيلتنا المميزة</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن وجبة...">
+        </div>
+
+        <div class="categories-container" id="categoriesContainer"></div>
+
+        <div class="menu-grid" id="menuGrid"></div>
+    </div>
+
+    <script>
+        const menuData = [
+            {"id":1,"name":"وجبة شاورما دجاج","price":"15 ر.س","category":"شاورما","description":"شرائح دجاج متبلة مع ثوم وبطاطس وخلطة خاصة"},
+            {"id":2,"name":"وجبة شاورما لحم","price":"18 ر.س","category":"شاورما","description":"شرائح لحم بقر طازج مع بقدونس وطحينة وبصل"},
+            {"id":3,"name":"كباب لحم مشوي","price":"35 ر.س","category":"مشويات","description":"أسياخ كباب لحم بلدي مشوي على الفحم مع الخضار"},
+            {"id":4,"name":"شيش طاووق","price":"30 ر.س","category":"مشويات","description":"قطع دجاج متبلة بالزبادي والبهارات المشوية على الفحم"},
+            {"id":5,"name":"برجر لحم كلاسيك","price":"22 ر.س","category":"برجر","description":"شريحة لحم بلدي مع جبن شيدر وخس وصوص خاص"},
+            {"id":6,"name":"برجر دجاج مقرمش","price":"20 ر.س","category":"برجر","description":"صدر دجاج مقرمش مع صلصة المايونيز بالحار والخس"},
+            {"id":7,"name":"حمص بالزيت","price":"10 ر.س","category":"مقبلات","description":"حمص ناعم مع زيت الزيتون الصافي والكمون"},
+            {"id":8,"name":"متبل باذنجان","price":"12 ر.س","category":"مقبلات","description":"باذنجان مشوي مهروس مع الطحينة وزيت الزيتون"},
+            {"id":9,"name":"عصير برتقال طازج","price":"8 ر.س","category":"مشروبات","description":"عصير برتقال طبيعي 100% بدون إضافات"},
+            {"id":10,"name":"مشروب غازي","price":"4 ر.س","category":"مشروبات","description":"بارد ومنعش بمختلف النكهات"},
+            {"id":11,"name":"كنافة بالمكسرات","price":"15 ر.س","category":"حلويات","description":"كنافة نابلسية مقرمشة محشوة بالقرش والقطر"},
+            {"id":12,"name":"أم علي بالمكسرات","price":"14 ر.س","category":"حلويات","description":"أم علي ساخنة بالحليب والمكسرات المحمصة"}
+        ];
+
+        let selectedCategory = "الكل";
+        let searchQuery = "";
+
+        function renderCategories() {
+            const container = document.getElementById("categoriesContainer");
+            const categories = ["الكل", ...new Set(menuData.map(item => item.category))];
+            
+            container.innerHTML = categories.map(cat => `
+                <button class="category-btn ${cat === selectedCategory ? 'active' : ''}" onclick="selectCategory('${cat}')">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function selectCategory(cat) {
+            selectedCategory = cat;
+            renderCategories();
+            renderMenu();
+        }
+
+        function renderMenu() {
+            const grid = document.getElementById("menuGrid");
+            const filtered = menuData.filter(item => {
+                const matchCategory = selectedCategory === "الكل" || item.category === selectedCategory;
+                const matchSearch = item.name.includes(searchQuery) || item.description.includes(searchQuery);
+                return matchCategory && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="no-results">لا توجد وجبات تطابق بحثك</div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => `
+                <div class="card">
+                    <div>
+                        <span class="card-category">${item.category}</span>
+                        <div class="card-header">
+                            <h3 class="card-title">${item.name}</h3>
+                            <span class="card-price">${item.price}</span>
+                        </div>
+                        <p class="card-description">${item.description}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById("searchInput").addEventListener("input", (e) => {
+            searchQuery = e.target.value.trim();
+            renderMenu();
+        });
+
+        renderCategories();
+        renderMenu();
+    </script>
+</body>
+</html>
