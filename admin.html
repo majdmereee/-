@@ -3,434 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الإدارة المدرع | SafeMode AI</title>
+    <title>منظومة الإدارة الاحترافية | Gemini Pro Nexus</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Tajawal', sans-serif; background: #0f172a; color: #f8fafc; }
-        .glass-panel { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #ef4444; border-radius: 4px; }
-        .toast { transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        .loader { border-top-color: #ef4444; -webkit-animation: spinner 1s linear infinite; animation: spinner 1s linear infinite; }
-        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .msg-enter { animation: slideIn 0.3s ease-out forwards; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        :root { --accent: #10b981; --accent-dark: #059669; --bg-dark: #0f172a; --panel: #1e293b; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg-dark); color: #f8fafc; margin: 0; height: 100vh; overflow: hidden; }
+        .glass { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); }
+        .terminal-scroll::-webkit-scrollbar { width: 6px; }
+        .terminal-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+        .loader { border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .toast-enter { animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden selection:bg-red-500/30">
+<body class="flex flex-col h-screen">
 
-    <header class="glass-panel px-4 sm:px-6 py-4 flex flex-wrap justify-between items-center z-10 shadow-2xl shrink-0 border-b border-red-500/30 gap-4">
-        <div class="flex items-center gap-3 sm:gap-4">
-            <div class="bg-gradient-to-br from-red-500 to-red-700 p-2 sm:p-3 rounded-xl shadow-lg shadow-red-500/30">
-                <i class="fa-solid fa-shield-halved text-xl sm:text-2xl"></i>
+    <header class="glass px-6 py-4 flex justify-between items-center shadow-xl z-20 shrink-0 border-b border-emerald-900/30">
+        <div class="flex items-center gap-4">
+            <div class="bg-emerald-600 p-3 rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.4)]">
+                <i class="fa-solid fa-server text-2xl"></i>
             </div>
             <div>
-                <h1 class="font-black text-lg sm:text-2xl text-white tracking-wide">النظام المدرع (SafeMode)</h1>
-                <p class="text-[10px] sm:text-xs text-slate-400 font-medium mt-1">حماية ثلاثية الطبقات • إدارة ذكية للمطعم</p>
+                <h1 class="font-black text-2xl tracking-wide text-white">PRO <span class="text-emerald-400">NEXUS</span></h1>
+                <p class="text-[11px] text-emerald-200/60 font-mono tracking-widest mt-1">AI-DRIVEN SECURE MANAGEMENT SYSTEM v3.0</p>
             </div>
         </div>
-        <button onclick="toggleSettings()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg font-bold transition flex items-center gap-2 text-sm sm:text-base border border-slate-600">
-            <i class="fa-solid fa-gear"></i> الإعدادات
-        </button>
+        <div class="flex gap-4">
+            <button onclick="restoreBackup()" class="hidden md:flex bg-amber-600/20 hover:bg-amber-600/40 text-amber-400 border border-amber-500/30 px-4 py-2 rounded-lg font-bold transition items-center gap-2 text-sm" id="btnRestore">
+                <i class="fa-solid fa-clock-rotate-left"></i> استعادة النسخة السابقة
+            </button>
+            <button onclick="toggleSettings()" class="bg-slate-700 hover:bg-slate-600 px-5 py-2 rounded-lg font-bold transition flex items-center gap-2 text-sm">
+                <i class="fa-solid fa-gear"></i> الإعدادات
+            </button>
+        </div>
     </header>
 
-    <div class="flex-1 flex overflow-hidden p-2 sm:p-4 gap-4 w-full max-w-6xl mx-auto relative">
-        <main class="flex-1 glass-panel rounded-2xl flex flex-col overflow-hidden shadow-2xl border border-slate-700">
-            <!-- شريط الحالة -->
-            <div class="p-3 sm:p-4 border-b border-slate-700 bg-slate-800/60 flex items-center justify-between">
+    <div class="flex flex-1 overflow-hidden p-4 gap-4 max-w-[1600px] w-full mx-auto">
+        
+        <aside class="w-80 glass rounded-2xl flex flex-col overflow-hidden shadow-2xl hidden lg:flex border border-slate-700/50">
+            <div class="p-4 bg-slate-900/80 border-b border-slate-700 flex justify-between items-center">
+                <span class="text-xs font-mono font-bold text-slate-300"><i class="fa-solid fa-terminal mr-2 text-emerald-400"></i> SYSTEM LOGS</span>
+                <span id="connStatus" class="w-2 h-2 rounded-full bg-red-500"></span>
+            </div>
+            <div id="systemLogs" class="flex-1 p-4 font-mono text-[11px] text-slate-400 overflow-y-auto terminal-scroll space-y-2">
+                <div>[SYSTEM] تهيئة النواة...</div>
+            </div>
+        </aside>
+
+        <main class="flex-1 glass rounded-2xl flex flex-col overflow-hidden shadow-2xl border border-slate-700/50 relative">
+            
+            <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-3">
-                    <span id="statusIndicator" class="w-3 h-3 rounded-full bg-amber-500 animate-pulse"></span>
-                    <span class="font-bold text-xs sm:text-sm text-slate-200">وحدة التحكم الآمنة</span>
+                    <span class="font-bold text-sm text-slate-200">الذكاء الاصطناعي (Interactions API)</span>
                 </div>
-                <div class="text-[10px] sm:text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1 rounded-full border border-slate-700" id="repoStatus">
-                    جاري فحص المستودع...
+                <div class="text-[10px] font-mono bg-emerald-900/30 text-emerald-400 px-3 py-1 rounded border border-emerald-500/20">
+                    SAFE MODE: ACTIVE
                 </div>
             </div>
 
-            <!-- منطقة المحادثة -->
-            <div id="chatMessages" class="flex-1 p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-6 scroll-smooth">
-                <div class="flex gap-3 sm:gap-4 items-start msg-enter">
-                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center shrink-0 shadow-lg">
-                        <i class="fa-solid fa-robot text-sm sm:text-base"></i>
+            <div id="chatMessages" class="flex-1 p-6 overflow-y-auto terminal-scroll space-y-6">
+                <div class="flex gap-4 items-start">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                        <i class="fa-solid fa-robot"></i>
                     </div>
-                    <div class="bg-slate-800 border border-slate-600 rounded-2xl rounded-tr-none p-4 sm:p-5 max-w-[90%] sm:max-w-[80%] shadow-md">
-                        <p class="leading-relaxed font-bold text-slate-200 text-sm sm:text-base">
-                            أهلاً بك أيها المدير 👋<br><br>
-                            تم تفعيل بروتوكول الحماية القصوى 🛡️<br>
-                            أنا هنا لمساعدتك في تعديل قائمة الطعام وتطوير واجهة الموقع بأمان تام. أي محاولة لكتابة كود خاطئ سيتم التصدي لها تلقائياً. كيف يمكنني مساعدتك اليوم؟
+                    <div class="bg-slate-700/60 border border-slate-600 rounded-2xl rounded-tr-none p-5 max-w-[85%] shadow-md">
+                        <p class="leading-relaxed font-medium text-sm text-slate-200">
+                            مرحباً! أنا النظام الاحترافي.<br><br>
+                            تم تدريبي بشكل مكثف على حماية الأكواد والبيانات. يمكنك طلب تعديل واجهة الموقع أو قاعدة البيانات، وسأمرر الكود عبر جدار الحماية قبل حفظه.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- منطقة الإدخال -->
-            <div class="p-3 sm:p-4 border-t border-slate-700 bg-slate-800/90 backdrop-blur-xl">
-                <form id="chatForm" class="flex flex-col sm:flex-row gap-3">
-                    <input type="text" id="userInput" placeholder="اطلب التعديل (مثال: أضف وجبة برغر جديدة، أو غيّر لون أزرار الموقع)..." 
-                        class="flex-1 bg-slate-900 border border-slate-600 rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-medium focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-white transition placeholder-slate-500" autocomplete="off">
-                    
-                    <button type="submit" id="sendBtn" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition shadow-lg shadow-red-600/20 disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
-                        <span id="btnText">تنفيذ آمن</span>
-                        <i class="fa-solid fa-lock" id="btnIcon"></i>
-                    </button>
+            <div class="p-4 bg-slate-900/90 border-t border-slate-700 shrink-0">
+                <form id="chatForm" class="flex flex-col gap-3">
+                    <div class="flex gap-2">
+                        <input type="text" id="userInput" placeholder="اكتب أوامرك هنا بثقة تامة..." 
+                            class="flex-1 bg-slate-800 border border-slate-600 rounded-xl px-5 py-4 text-sm font-medium focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-white transition">
+                        
+                        <button type="submit" id="sendBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl font-bold text-sm flex items-center gap-3 transition shadow-lg shadow-emerald-600/20 disabled:opacity-50">
+                            <span id="btnText">تنفيذ آمن</span>
+                            <i class="fa-solid fa-shield-check" id="btnIcon"></i>
+                        </button>
+                    </div>
                 </form>
             </div>
         </main>
     </div>
 
-    <!-- نافذة الإعدادات -->
-    <div id="settingsModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden transition-opacity">
-        <div class="glass-panel rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-700 relative">
-            <button onclick="toggleSettings()" class="absolute top-4 left-4 text-slate-400 hover:text-white transition">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-            <h3 class="font-black text-xl text-white mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-key text-red-500"></i> مفاتيح النظام
-            </h3>
-            <p class="text-xs text-slate-400 mb-6">البيانات تحفظ محلياً في متصفحك فقط ولا يتم مشاركتها.</p>
-            
+    <div id="settingsModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+        <div class="glass rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-700">
+            <h3 class="font-black text-xl text-white mb-6 border-b border-slate-700 pb-3">إعدادات النواة</h3>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">Gemini API Key</label>
-                    <input type="password" id="geminiKey" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-red-500 focus:outline-none">
+                    <label class="text-xs text-slate-400 mb-1 block">Gemini API Key</label>
+                    <input type="password" id="geminiKey" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white font-mono focus:border-emerald-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">GitHub Token (Classic)</label>
-                    <input type="password" id="githubToken" placeholder="ghp_..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-red-500 focus:outline-none" onchange="autoDetectRepo()">
+                    <label class="text-xs text-slate-400 mb-1 block">GitHub Token (Classic)</label>
+                    <input type="password" id="githubToken" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white font-mono focus:border-emerald-500 outline-none" onchange="autoDetectRepo()">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-300 mb-1">المستودع (Repository)</label>
-                    <div class="relative">
-                        <select id="repoSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white cursor-pointer appearance-none focus:border-red-500 focus:outline-none">
-                            <option value="">أدخل الـ Token أولاً...</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
-                    </div>
+                    <label class="text-xs text-slate-400 mb-1 block">المستودع (Repository)</label>
+                    <select id="repoSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white cursor-pointer outline-none"></select>
                 </div>
             </div>
-            <button onclick="saveSettings()" class="w-full mt-8 bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-red-600/30">حفظ وتوصيل</button>
+            <button onclick="saveSettings()" class="w-full mt-8 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg transition">تطبيق الإعدادات</button>
         </div>
     </div>
 
-    <!-- حاوية الإشعارات -->
-    <div id="toastContainer" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-[90%] max-w-sm"></div>
+    <div id="toastContainer" class="fixed bottom-5 left-5 z-50 flex flex-col gap-3"></div>
 
     <script>
-        // --- حالة النظام ---
-        let currentMenuData = [];
-        let currentHtmlData = "";
-        let chatHistory = []; 
-
-        // --- التشفير الحديث والآمن للغة العربية ---
-        const utf8_to_b64 = (str) => {
-            return btoa(new TextEncoder().encode(str).reduce((data, byte) => data + String.fromCharCode(byte), ''));
-        };
-        const b64_to_utf8 = (str) => {
-            return new TextDecoder().decode(new Uint8Array([...atob(str)].map(c => c.charCodeAt(0))));
-        };
-        
-        // --- الإشعارات ---
-        const showToast = (msg, type = 'info') => {
-            const colors = { success: 'bg-emerald-600', error: 'bg-red-600', info: 'bg-blue-600', warning: 'bg-orange-600' };
-            const icons = { success: 'fa-check-circle', error: 'fa-circle-xmark', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
-            
-            const toast = document.createElement('div');
-            toast.className = `${colors[type]} text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-sm font-bold toast translate-y-10 opacity-0 border border-white/10`;
-            toast.innerHTML = `<i class="fa-solid ${icons[type]} text-lg"></i><span class="flex-1">${msg}</span>`;
-            
-            const container = document.getElementById('toastContainer');
-            container.appendChild(toast);
-            
-            requestAnimationFrame(() => toast.classList.remove('translate-y-10', 'opacity-0'));
-            setTimeout(() => { 
-                toast.classList.add('translate-y-10', 'opacity-0'); 
-                setTimeout(() => toast.remove(), 400); 
-            }, 4500);
+        // --- System State ---
+        const State = {
+            menu: [], menuSha: "",
+            html: "", htmlSha: "",
+            interactionId: null,
+            backupMenu: null, backupHtml: null
         };
 
-        // --- التهيئة ---
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('chatForm').addEventListener('submit', handleSecureExecution);
-            const [savedGemini, savedGit, savedRepo] = ['GEMINI_KEY', 'GITHUB_TOKEN', 'GITHUB_REPO'].map(k => localStorage.getItem(k) || '');
-            
-            document.getElementById('geminiKey').value = savedGemini;
-            document.getElementById('githubToken').value = savedGit;
-            
-            if (!savedGemini || !savedGit || !savedRepo) {
-                toggleSettings();
-            } else {
-                autoDetectRepo(savedRepo);
+        // --- Core Utilities ---
+        const Utils = {
+            b64Encode: str => btoa(unescape(encodeURIComponent(str))),
+            b64Decode: str => decodeURIComponent(escape(atob(str))),
+            log: (msg, type = "info") => {
+                const colors = { info: "text-slate-400", success: "text-emerald-400", error: "text-red-400", warning: "text-amber-400" };
+                const time = new Date().toLocaleTimeString([], { hour12: false });
+                const logEl = document.getElementById("systemLogs");
+                logEl.insertAdjacentHTML('beforeend', `<div class="${colors[type]}">[${time}] ${msg}</div>`);
+                logEl.scrollTop = logEl.scrollHeight;
+            },
+            toast: (msg, type = 'success') => {
+                const colors = { success: 'bg-emerald-600', error: 'bg-red-600', warning: 'bg-amber-600' };
+                const icons = { success: 'fa-check', error: 'fa-xmark', warning: 'fa-exclamation' };
+                const t = document.createElement('div');
+                t.className = `${colors[type]} text-white px-5 py-4 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-bold toast-enter border border-white/10`;
+                t.innerHTML = `<i class="fa-solid ${icons[type]}"></i><span>${msg}</span>`;
+                document.getElementById('toastContainer').appendChild(t);
+                setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(20px)'; t.style.transition = 'all 0.3s'; setTimeout(() => t.remove(), 300); }, 5000);
             }
+        };
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('chatForm').addEventListener('submit', App.handleExecution);
+            const [gk, gt, gr] = ['GEMINI_KEY', 'GITHUB_TOKEN', 'GITHUB_REPO'].map(k => localStorage.getItem(k) || '');
+            document.getElementById('geminiKey').value = gk;
+            document.getElementById('githubToken').value = gt;
+            
+            if (!gk || !gt) toggleSettings();
+            else { App.autoDetectRepo(gr); App.loadBackup(); }
         });
 
-        function toggleSettings() { 
-            const modal = document.getElementById('settingsModal');
-            modal.classList.toggle('hidden'); 
-        }
+        function toggleSettings() { document.getElementById('settingsModal').classList.toggle('hidden'); }
         
         function saveSettings() {
             localStorage.setItem('GEMINI_KEY', document.getElementById('geminiKey').value.trim());
             localStorage.setItem('GITHUB_TOKEN', document.getElementById('githubToken').value.trim());
             localStorage.setItem('GITHUB_REPO', document.getElementById('repoSelect').value);
             toggleSettings();
-            fetchRepositoryData();
+            App.fetchRepo();
         }
 
-        async function autoDetectRepo(defaultSelect = '') {
-            const token = document.getElementById('githubToken').value.trim();
-            const select = document.getElementById('repoSelect');
-            if (!token) return;
-            
-            select.innerHTML = '<option>جاري البحث...</option>';
-            try {
-                const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', { 
-                    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-                });
-                if (!res.ok) throw new Error('Token غير صالح');
-                const repos = await res.json();
+        // --- Application Logic ---
+        const App = {
+            autoDetectRepo: async (defaultSelect = '') => {
+                const token = document.getElementById('githubToken').value.trim();
+                if (!token) return;
+                try {
+                    Utils.log("جارِ التحقق من هوية GitHub...", "info");
+                    const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', { headers: { 'Authorization': `token ${token}` }});
+                    const repos = await res.json();
+                    const select = document.getElementById('repoSelect');
+                    select.innerHTML = repos.map(r => `<option value="${r.full_name}">${r.full_name}</option>`).join('');
+                    if (defaultSelect) select.value = defaultSelect;
+                    App.fetchRepo();
+                } catch (err) { Utils.log("فشل مصادقة GitHub", "error"); }
+            },
+
+            fetchRepo: async () => {
+                const [token, repo] = [localStorage.getItem('GITHUB_TOKEN'), localStorage.getItem('GITHUB_REPO')];
+                if (!token || !repo) return;
                 
-                if(repos.length === 0) {
-                    select.innerHTML = '<option value="">لا توجد مستودعات</option>';
-                    return;
+                Utils.log(`جلب الملفات من المستودع: ${repo}...`, "info");
+                try {
+                    const [jsonRes, htmlRes] = await Promise.all([
+                        fetch(`https://api.github.com/repos/${repo}/contents/menu.json`, { headers: { 'Authorization': `token ${token}` }}),
+                        fetch(`https://api.github.com/repos/${repo}/contents/index.html`, { headers: { 'Authorization': `token ${token}` }})
+                    ]);
+
+                    if (jsonRes.ok) {
+                        const data = await jsonRes.json();
+                        State.menuSha = data.sha;
+                        State.menu = JSON.parse(Utils.b64Decode(data.content));
+                        Utils.log("تم تحميل menu.json بنجاح", "success");
+                    }
+                    if (htmlRes.ok) {
+                        const data = await htmlRes.json();
+                        State.htmlSha = data.sha;
+                        State.html = Utils.b64Decode(data.content);
+                        Utils.log("تم تحميل index.html بنجاح", "success");
+                    }
+                    document.getElementById('connStatus').className = "w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]";
+                } catch (err) {
+                    Utils.log("خطأ حرج في جلب الملفات", "error");
+                    document.getElementById('connStatus').className = "w-2 h-2 rounded-full bg-red-500";
                 }
-                
-                select.innerHTML = repos.map(r => `<option value="${r.full_name}">${r.full_name}</option>`).join('');
-                if (defaultSelect && repos.find(r => r.full_name === defaultSelect)) {
-                    select.value = defaultSelect;
+            },
+
+            createBackup: () => {
+                localStorage.setItem('BACKUP_MENU', JSON.stringify(State.menu));
+                localStorage.setItem('BACKUP_HTML', State.html);
+                State.backupMenu = JSON.parse(JSON.stringify(State.menu));
+                State.backupHtml = State.html;
+                Utils.log("تم إنشاء نقطة استعادة محلية", "success");
+            },
+
+            loadBackup: () => {
+                const bm = localStorage.getItem('BACKUP_MENU');
+                const bh = localStorage.getItem('BACKUP_HTML');
+                if (bm && bh) {
+                    State.backupMenu = JSON.parse(bm);
+                    State.backupHtml = bh;
                 }
-                if (localStorage.getItem('GITHUB_REPO') === select.value) fetchRepositoryData();
-            } catch (err) {
-                select.innerHTML = '<option value="">فشل الاتصال بـ GitHub</option>';
-                showToast(err.message, 'error');
-            }
-        }
+            },
 
-        // --- جلب البيانات مع تحديث الـ SHA ---
-        async function fetchGitHubFile(repo, token, path) {
-            const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}?t=${Date.now()}`, { 
-                headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Cache-Control': 'no-cache' }
-            });
-            if (!res.ok) {
-                if (res.status === 404) return { sha: null, content: null }; // الملف غير موجود بعد
-                throw new Error(`خطأ في جلب ${path}`);
-            }
-            const data = await res.json();
-            return { sha: data.sha, content: b64_to_utf8(data.content) };
-        }
-
-        async function fetchRepositoryData() {
-            const token = localStorage.getItem('GITHUB_TOKEN');
-            const repo = localStorage.getItem('GITHUB_REPO');
-            const statusIndicator = document.getElementById('statusIndicator');
-            const repoStatus = document.getElementById('repoStatus');
-
-            if (!token || !repo) return;
-            
-            repoStatus.innerText = 'جاري التزامن...';
-            statusIndicator.className = 'w-3 h-3 rounded-full bg-amber-500 animate-pulse';
-
-            try {
-                const menuFile = await fetchGitHubFile(repo, token, 'menu.json');
-                if (menuFile.content) currentMenuData = JSON.parse(menuFile.content);
-
-                const htmlFile = await fetchGitHubFile(repo, token, 'index.html');
-                if (htmlFile.content) currentHtmlData = htmlFile.content;
-
-                repoStatus.innerText = repo.split('/')[1];
-                statusIndicator.className = 'w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]';
-                showToast('تم الاتصال بالمستودع بنجاح', 'success');
-            } catch (err) {
-                repoStatus.innerText = 'فشل الاتصال';
-                statusIndicator.className = 'w-3 h-3 rounded-full bg-red-600';
-                showToast('تعذر جلب ملفات الموقع', 'error');
-            }
-        }
-
-        // --- محرك المحادثة ---
-        function appendMsg(role, content, isAlert = false) {
-            const box = document.getElementById('chatMessages');
-            const isUser = role === 'user';
-            
-            const html = `
-                <div class="flex gap-3 sm:gap-4 items-start ${isUser ? 'flex-row-reverse' : ''} msg-enter">
-                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl ${isUser ? 'bg-slate-700' : (isAlert ? 'bg-red-600' : 'bg-gradient-to-br from-red-500 to-red-700')} flex items-center justify-center shrink-0 shadow-lg">
-                        <i class="fa-solid ${isUser ? 'fa-user' : (isAlert ? 'fa-triangle-exclamation' : 'fa-robot')} text-white text-sm sm:text-base"></i>
-                    </div>
-                    <div class="${isUser ? 'bg-blue-600 text-white' : (isAlert ? 'bg-red-950/80 border-red-500/50 text-red-200' : 'bg-slate-800 text-slate-200 border-slate-700')} border rounded-2xl ${isUser ? 'rounded-tl-none' : 'rounded-tr-none'} p-4 sm:p-5 max-w-[90%] sm:max-w-[80%] shadow-md text-sm sm:text-base leading-relaxed whitespace-pre-wrap font-medium">
-                        ${content}
-                    </div>
-                </div>`;
-            box.insertAdjacentHTML('beforeend', html);
-            box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
-        }
-
-        // --- الذكاء الاصطناعي وجدار الحماية المزدوج ---
-        async function handleSecureExecution(e) {
-            e.preventDefault();
-            const inputEl = document.getElementById('userInput');
-            const prompt = inputEl.value.trim();
-            const btnEl = document.getElementById('sendBtn');
-            
-            if (!prompt) return;
-
-            const geminiKey = localStorage.getItem('GEMINI_KEY');
-            const ghToken = localStorage.getItem('GITHUB_TOKEN');
-            const repo = localStorage.getItem('GITHUB_REPO');
-
-            if (!geminiKey || !ghToken || !repo) {
-                showToast('يرجى إعداد المفاتيح أولاً', 'warning');
-                toggleSettings();
-                return;
-            }
-
-            appendMsg('user', prompt);
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-            
-            inputEl.value = '';
-            btnEl.disabled = true;
-            document.getElementById('btnText').innerText = 'جاري التحليل...';
-            document.getElementById('btnIcon').className = 'loader w-4 h-4 rounded-full border-2 border-white/30 border-t-white';
-
-            try {
-                // استخدام الموديل القياسي القوي للبرمجة
-                const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${geminiKey}`;
+            appendMsg: (role, content, badge = null, isError = false) => {
+                const box = document.getElementById('chatMessages');
+                const isUser = role === 'user';
+                const style = isUser ? 'bg-slate-700' : (isError ? 'bg-red-900/30 border-red-500/50' : 'bg-slate-800 border-slate-700');
+                const textStyle = isError ? 'text-red-200' : 'text-slate-200';
                 
-                const systemPrompt = `أنت المساعد التقني الذكي لإدارة مطعم.
-الهدف: مساعدة المدير في تعديل بيانات قائمة الطعام (JSON) وتحديث تصميم الموقع (HTML).
-يجب أن تعيد استجابتك بصيغة JSON حصراً مطابقة للـ Schema المطلوبة.
-- لا تحذف أي بيانات سابقة من JSON ما لم يطلب المدير ذلك صراحة.
-- إذا كان هناك تعديل على HTML، يجب إرجاع الكود كاملاً (يبدأ بـ <!DOCTYPE html> وينتهي بـ </html>). لا ترجع أبداً كود مقطوع.
-- قم بكتابة رسالة تفاعلية احترافية للمدير في حقل "reply".
+                const html = `
+                    <div class="flex gap-4 items-start ${isUser ? 'flex-row-reverse' : ''}">
+                        <div class="w-10 h-10 rounded-xl ${isUser ? 'bg-slate-600' : (isError ? 'bg-red-600' : 'bg-emerald-600')} flex items-center justify-center shrink-0 shadow-lg">
+                            <i class="fa-solid ${isUser ? 'fa-user' : (isError ? 'fa-triangle-exclamation' : 'fa-code')} text-white"></i>
+                        </div>
+                        <div class="${style} border rounded-2xl ${isUser ? 'rounded-tl-none' : 'rounded-tr-none'} p-5 max-w-[85%] shadow-md text-sm leading-relaxed whitespace-pre-wrap font-medium ${textStyle}">
+                            ${content}
+                            ${badge ? `<div class="mt-3 pt-3 border-t border-white/10 text-xs font-bold ${isError ? 'text-red-400' : 'text-emerald-400'}"><i class="fa-solid fa-check-double"></i> ${badge}</div>` : ''}
+                        </div>
+                    </div>`;
+                box.insertAdjacentHTML('beforeend', html);
+                box.scrollTop = box.scrollHeight;
+            },
 
-[البيانات الحالية للوجبات - JSON]
-${JSON.stringify(currentMenuData)}
+            handleExecution: async (e) => {
+                e.preventDefault();
+                const inputEl = document.getElementById('userInput');
+                const btnEl = document.getElementById('sendBtn');
+                const prompt = inputEl.value.trim();
+                if (!prompt) return;
 
-[الكود الحالي للموقع - HTML]
-(تم تمريره في الذاكرة، قم بتعديله بحذر)`;
+                const [gk, gt, gr] = ['GEMINI_KEY', 'GITHUB_TOKEN', 'GITHUB_REPO'].map(k => localStorage.getItem(k));
+                if (!gk) { Utils.toast("بيانات المصادقة مفقودة!", "error"); return; }
 
-                const requestBody = {
-                    system_instruction: { parts: [{ text: systemPrompt }] },
-                    contents: chatHistory,
-                    generationConfig: {
-                        temperature: 0.2, // تقليل الهلوسة
-                        response_mime_type: "application/json",
-                        response_schema: {
-                            type: "OBJECT",
-                            properties: {
-                                reply: { type: "STRING", description: "رسالة موجهة للمستخدم تشرح ما تم فعله" },
-                                has_menu_changes: { type: "BOOLEAN" },
-                                updated_menu: { 
-                                    type: "ARRAY", 
-                                    items: { 
-                                        type: "OBJECT", 
-                                        properties: { 
-                                            id: {type: "NUMBER"}, name: {type: "STRING"}, category: {type: "STRING"}, price: {type: "STRING"}, description: {type: "STRING"} 
-                                        } 
-                                    } 
+                App.appendMsg('user', prompt);
+                inputEl.value = '';
+                btnEl.disabled = true;
+                document.getElementById('btnText').innerText = "جاري المعالجة";
+                document.getElementById('btnIcon').className = "loader";
+
+                try {
+                    Utils.log(`بدء معالجة طلب: ${prompt.substring(0, 20)}...`, "info");
+                    
+                    // --- Advanced Few-Shot System Prompt ---
+                    const sysPrompt = `أنت الذكاء الاصطناعي الأقوى (Gemini Pro)، مبرمج واجهات (HTML) ومدير قواعد بيانات (JSON).
+                    
+[البيانات الحالية]: ${JSON.stringify(State.menu)}
+[الواجهة الحالية]: ${State.html}
+
+قواعد التدريب الصارمة جداً:
+1. التعديل على JSON: يجب أن تحتفظ بجميع عناصر المصفوفة القديمة، وتضيف الجديد عليها. ممنوع حذف أي وجبة إلا إذا طُلب صراحة. 
+2. قيم JSON: ممنوع منعاً باتاً كتابة أي ملاحظات، أو أكواد، أو أفكار باللغة الإنجليزية داخل قيم الـ JSON (مثل الوصف أو السعر).
+3. التعديل على HTML: إذا قمت بتعديل التصميم، يجب أن ترجع الكود كاملاً يبدأ بـ <!DOCTYPE html> ويحتوي على <html> و <body>. ممنوع إرجاع كلمة null أو أكواد مقطوعة.
+4. الردود: قم بإرجاع القيم المطلوبة داخل الـ JSON Schema فقط.
+
+أمثلة صحيحة للاستجابة:
+- تعديل واجهة: has_html_changes: true, updated_html: "<!DOCTYPE html><html><body>...</body></html>"
+- تعديل بيانات: has_menu_changes: true, updated_menu: [{"id":1, "name":"وجبة", ...}, {"id":2, "name":"الجديد"}]`;
+
+                    const requestBody = {
+                        model: "gemini-3.6-flash",
+                        input: [{ type: "text", text: sysPrompt }, { type: "text", text: prompt }],
+                        response_format: {
+                            type: "text", mime_type: "application/json",
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    reply: { type: "string", description: "شرح ودود بالعربية" },
+                                    has_menu_changes: { type: "boolean" },
+                                    updated_menu: { type: "array", items: { type: "object", properties: { id: {type: "integer"}, name: {type: "string"}, category: {type: "string"}, price: {type: "string"}, description: {type: "string"} } } },
+                                    has_html_changes: { type: "boolean" },
+                                    updated_html: { type: "string" }
                                 },
-                                has_html_changes: { type: "BOOLEAN" },
-                                updated_html: { type: "STRING", description: "Full valid HTML code" }
-                            },
-                            required: ["reply", "has_menu_changes", "has_html_changes"]
+                                required: ["reply", "has_menu_changes", "has_html_changes"]
+                            }
                         }
-                    }
-                };
+                    };
 
-                const res = await fetch(API_URL, {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify(requestBody)
+                    if (State.interactionId) requestBody.previous_interaction_id = State.interactionId;
+
+                    Utils.log("إرسال الطلب إلى Gemini Interactions API...", "info");
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/interactions?key=${gk}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody)
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error?.message || "فشل الاتصال بـ API");
+                    if (data.id) State.interactionId = data.id;
+
+                    const aiText = data.steps?.find(s => s.type === "model_output")?.content?.find(c => c.type === "text")?.text || "";
+                    if (!aiText) throw new Error("استجابة النواة كانت فارغة.");
+
+                    const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+                    if (!jsonMatch) throw new Error("الصيغة المستلمة غير صالحة.");
+                    const parsed = JSON.parse(jsonMatch[0]);
+
+                    Utils.log("استلام رد الذكاء الاصطناعي بنجاح، جاري فحص الأمان...", "success");
+
+                    let actionBadges = [];
+                    let hasChanges = false;
+
+                    // --- FIREWALL: Validate and Apply Changes ---
+                    if (parsed.has_html_changes && parsed.updated_html) {
+                        const newHtml = parsed.updated_html.trim();
+                        // فحص أمني صارم
+                        if (newHtml.length < 100 || !newHtml.toLowerCase().includes("<body") || newHtml.toLowerCase() === "null") {
+                            throw new Error("🚨 الحماية التلقائية: الذكاء الاصطناعي حاول إرسال كود HTML معطوب. تم حظر الرفع لحماية موقعك.");
+                        }
+                        
+                        App.createBackup(); // Create snapshot before modifying
+                        State.html = newHtml;
+                        hasChanges = true;
+                        
+                        Utils.log("رفع تحديث HTML إلى GitHub...", "info");
+                        const ghRes = await fetch(`https://api.github.com/repos/${gr}/contents/index.html`, {
+                            method: 'PUT', headers: { 'Authorization': `token ${gt}`, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ message: "Pro Admin: UI Update", content: Utils.b64Encode(State.html), sha: State.htmlSha })
+                        });
+                        State.htmlSha = (await ghRes.json()).content.sha;
+                        actionBadges.push("تم تحديث الواجهة والتصميم بنجاح ✅");
+                    }
+
+                    if (parsed.has_menu_changes && parsed.updated_menu) {
+                        // فحص أمني للمصفوفة
+                        if (parsed.updated_menu.length === 0 && State.menu.length > 0 && !prompt.includes("احذف")) {
+                            throw new Error("🚨 الحماية التلقائية: محاولة مسح قاعدة البيانات. تم حظر العملية.");
+                        }
+
+                        // منع تكرار أو حذف غير مقصود (Merge if necessary)
+                        if (parsed.updated_menu.length < State.menu.length && !prompt.includes("احذف")) {
+                            Utils.log("تنبيه: محاولة حذف وجبات بدون إذن، سيتم دمج البيانات القديمة.", "warning");
+                            const newItems = parsed.updated_menu.filter(n => !State.menu.some(o => o.name === n.name));
+                            parsed.updated_menu = [...State.menu, ...newItems];
+                        }
+
+                        if (!hasChanges) App.createBackup(); // Backup if not already backed up
+                        State.menu = parsed.updated_menu;
+                        hasChanges = true;
+
+                        Utils.log("رفع تحديث JSON إلى GitHub...", "info");
+                        const ghRes = await fetch(`https://api.github.com/repos/${gr}/contents/menu.json`, {
+                            method: 'PUT', headers: { 'Authorization': `token ${gt}`, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ message: "Pro Admin: Data Update", content: Utils.b64Encode(JSON.stringify(State.menu, null, 2)), sha: State.menuSha })
+                        });
+                        State.menuSha = (await ghRes.json()).content.sha;
+                        actionBadges.push("تم تحديث قاعدة البيانات بنجاح ✅");
+                    }
+
+                    if (hasChanges) {
+                        Utils.toast('تمت التحديثات بأمان', 'success');
+                        document.getElementById('btnRestore').classList.remove('hidden');
+                    }
+                    
+                    App.appendMsg('model', parsed.reply, actionBadges.join(" | ") || "تم الرد (بدون تعديلات برمجية)");
+                    Utils.log("اكتملت العملية بنجاح", "success");
+
+                } catch (err) {
+                    Utils.log(`فشل: ${err.message}`, "error");
+                    App.appendMsg('model', err.message, null, true);
+                    Utils.toast('تم إيقاف عملية غير آمنة', 'error');
+                } finally {
+                    btnEl.disabled = false;
+                    document.getElementById('btnText').innerText = "تنفيذ آمن";
+                    document.getElementById('btnIcon').className = "fa-solid fa-shield-check";
+                }
+            }
+        };
+
+        // --- Emergency Restore Function ---
+        async function restoreBackup() {
+            if (!State.backupMenu || !State.backupHtml) return Utils.toast("لا يوجد نسخة سابقة", "error");
+            
+            const [gt, gr] = [localStorage.getItem('GITHUB_TOKEN'), localStorage.getItem('GITHUB_REPO')];
+            Utils.log("بدء عملية الاستعادة الطارئة...", "warning");
+            
+            try {
+                // Restore JSON
+                const resMenu = await fetch(`https://api.github.com/repos/${gr}/contents/menu.json`, {
+                    method: 'PUT', headers: { 'Authorization': `token ${gt}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Emergency Rollback: Data", content: Utils.b64Encode(JSON.stringify(State.backupMenu, null, 2)), sha: State.menuSha })
                 });
-                
-                if (!res.ok) throw new Error("فشل الاتصال بخوادم Gemini. تحقق من المفتاح.");
-                
-                const data = await res.json();
-                const responseText = data.candidates[0].content.parts[0].text;
-                
-                // حفظ الرد في سجل المحادثة
-                chatHistory.push({ role: "model", parts: [{ text: responseText }] });
-                // الحفاظ على حجم الذاكرة
-                if(chatHistory.length > 10) chatHistory = chatHistory.slice(chatHistory.length - 10);
+                State.menuSha = (await resMenu.json()).content.sha;
+                State.menu = State.backupMenu;
 
-                const parsedResult = JSON.parse(responseText);
-                let finalMessages = [parsedResult.reply];
-                let operationsSuccessful = true;
+                // Restore HTML
+                const resHtml = await fetch(`https://api.github.com/repos/${gr}/contents/index.html`, {
+                    method: 'PUT', headers: { 'Authorization': `token ${gt}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "Emergency Rollback: UI", content: Utils.b64Encode(State.backupHtml), sha: State.htmlSha })
+                });
+                State.htmlSha = (await resHtml.json()).content.sha;
+                State.html = State.backupHtml;
 
-                // --- 🛡️ جدار الحماية الأول: HTML Firewall ---
-                if (parsedResult.has_html_changes && parsedResult.updated_html) {
-                    const newHtml = parsedResult.updated_html.trim();
-                    const lowerHtml = newHtml.toLowerCase();
-                    
-                    if (newHtml.length < 100 || !lowerHtml.includes("<html") || !lowerHtml.includes("</html>")) {
-                        throw new Error("🚨 [جدار الحماية]: الذكاء الاصطناعي حاول إرسال كود HTML مقطوع أو مدمر. تم إيقاف العملية لحماية موقعك.");
-                    }
-                    
-                    // جلب أحدث SHA قبل التعديل مباشرة لتجنب تضارب الملفات
-                    const latestHtml = await fetchGitHubFile(repo, ghToken, 'index.html');
-                    
-                    const ghResHtml = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`, {
-                        method: 'PUT', 
-                        headers: { 'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            message: "SafeMode: UI Update", 
-                            content: utf8_to_b64(newHtml), 
-                            sha: latestHtml.sha 
-                        })
-                    });
-                    
-                    if (ghResHtml.ok) {
-                        currentHtmlData = newHtml;
-                        finalMessages.push("✅ الواجهة: تم التحديث بنجاح.");
-                    } else {
-                        operationsSuccessful = false;
-                        throw new Error("فشل رفع HTML إلى GitHub.");
-                    }
-                }
-
-                // --- 🛡️ جدار الحماية الثاني: JSON Firewall ---
-                if (parsedResult.has_menu_changes && parsedResult.updated_menu) {
-                    // منع حذف قاعدة البيانات بالخطأ
-                    if (parsedResult.updated_menu.length === 0 && currentMenuData.length > 0 && !prompt.includes("حذف")) {
-                         throw new Error("🚨 [جدار الحماية]: محاولة مسح كامل قائمة الطعام بدون إذن صريح. تم إيقاف العملية.");
-                    }
-                    
-                    const latestMenu = await fetchGitHubFile(repo, ghToken, 'menu.json');
-                    
-                    const ghRes = await fetch(`https://api.github.com/repos/${repo}/contents/menu.json`, {
-                        method: 'PUT', 
-                        headers: { 'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            message: "SafeMode: Menu Data Update", 
-                            content: utf8_to_b64(JSON.stringify(parsedResult.updated_menu, null, 2)), 
-                            sha: latestMenu.sha 
-                        })
-                    });
-                    
-                    if (ghRes.ok) {
-                        currentMenuData = parsedResult.updated_menu;
-                        finalMessages.push("✅ البيانات: تم تحديث الوجبات بنجاح.");
-                    } else {
-                        operationsSuccessful = false;
-                        throw new Error("فشل رفع البيانات إلى GitHub.");
-                    }
-                }
-
-                appendMsg('model', finalMessages.join('\n\n'));
-                if (parsedResult.has_menu_changes || parsedResult.has_html_changes) {
-                    showToast('تم تطبيق التعديلات بنجاح', 'success');
-                }
-
-            } catch (err) {
-                console.error(err);
-                appendMsg('model', err.message, true);
-                showToast('تدخل أمني: تم حظر التخريب', 'error');
-            } finally {
-                btnEl.disabled = false;
-                document.getElementById('btnText').innerText = 'تنفيذ آمن';
-                document.getElementById('btnIcon').className = 'fa-solid fa-lock';
-                inputEl.focus();
+                App.appendMsg('model', "تم استعادة الموقع وقاعدة البيانات إلى الحالة السابقة بنجاح. موقعك الآن بأمان.", "عملية استرجاع (Rollback) ناجحة");
+                Utils.toast('تمت الاستعادة بنجاح', 'success');
+                Utils.log("نجاح الاستعادة.", "success");
+            } catch(e) {
+                Utils.log("فشل الاستعادة: " + e.message, "error");
+                Utils.toast('فشل استعادة النسخة', 'error');
             }
         }
     </script>
