@@ -27,7 +27,7 @@
             </div>
             <div>
                 <h1 class="font-black text-2xl bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-400">Full-Stack Interactions API</h1>
-                <p class="text-xs text-slate-400 font-medium mt-1">يعمل عبر نقطة النهاية (gemini-3.6-flash)</p>
+                <p class="text-xs text-slate-400 font-medium mt-1">النسخة الصارمة (Strict Mode)</p>
             </div>
         </div>
         <div class="flex gap-3">
@@ -60,15 +60,7 @@
                         <i class="fa-solid fa-robot"></i>
                     </div>
                     <div class="bg-slate-700/50 border border-slate-600 rounded-2xl rounded-tr-none p-5 max-w-[85%] shadow-md">
-                        <p class="leading-relaxed font-medium">أهلاً بك أيها المدير. أنا متصل الآن بأحدث أنظمة <b>Gemini Interactions API</b>.
-                        <br><br>
-                        💡 <b>أنا أتحكم بالتصميم (HTML) والبيانات (JSON). اطلب مني:</b>
-                        <ul class="list-disc list-inside mt-2 text-slate-300 space-y-2 text-sm">
-                            <li>"غير لون زر الطلب في الموقع إلى الأحمر"</li>
-                            <li>"أضف 3 وجبات جديدة في قسم المشاوي"</li>
-                            <li>أو ارفع لي صورة منيو ورقي وسأقوم بإضافة الوجبات منه مباشرة!</li>
-                        </ul>
-                        </p>
+                        <p class="leading-relaxed font-medium">تم تفعيل <b>النظام الصارم</b> لحماية بياناتك.<br>لن أقوم بحذف أي وجبة قديمة أبداً عند الإضافة، ولن أكتب أي أفكار غريبة داخل المنيو. يمكنك الاعتماد علي!</p>
                     </div>
                 </div>
             </div>
@@ -76,11 +68,9 @@
             <!-- Input Area -->
             <div class="p-4 border-t border-slate-700 bg-slate-800/80">
                 <form id="chatForm" class="flex flex-col gap-3">
-                    <!-- Image Preview Area -->
                     <div id="imagePreviewContainer" class="hidden flex gap-2 overflow-x-auto pb-2 custom-scrollbar"></div>
                     
                     <div class="flex gap-2">
-                        <!-- Image Upload Button -->
                         <label class="bg-slate-700 hover:bg-slate-600 text-slate-300 w-12 flex items-center justify-center rounded-xl cursor-pointer transition border border-slate-600" title="إرفاق صورة">
                             <i class="fa-solid fa-image"></i>
                             <input type="file" id="imageInput" accept="image/*" class="hidden" multiple onchange="handleImageSelection(event)">
@@ -132,7 +122,6 @@
     <div id="toastContainer" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2"></div>
 
     <script>
-        // --- Core System State (Full-Stack + Interactions) ---
         let currentMenuData = [];
         let currentMenuSha = "";
         let currentHtmlData = "";
@@ -140,7 +129,6 @@
         let previousInteractionId = null; 
         let selectedImagesBase64 = [];
 
-        // --- Utility Functions ---
         const utf8_to_b64 = str => btoa(unescape(encodeURIComponent(str)));
         const b64_to_utf8 = str => decodeURIComponent(escape(atob(str)));
         
@@ -158,7 +146,6 @@
             }, 4000);
         };
 
-        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('chatForm').addEventListener('submit', handleExecution);
             const [savedGemini, savedGit, savedRepo] = ['GEMINI_KEY', 'GITHUB_TOKEN', 'GITHUB_REPO'].map(k => localStorage.getItem(k) || '');
@@ -204,7 +191,6 @@
             } catch (err) { showToast('خطأ في مصادقة GitHub', 'error'); }
         }
 
-        // --- Fetch ALL Files (JSON + HTML) ---
         async function fetchRepositoryData() {
             const token = localStorage.getItem('GITHUB_TOKEN');
             const repo = document.getElementById('repoSelect').value || localStorage.getItem('GITHUB_REPO');
@@ -213,7 +199,6 @@
             document.getElementById('filesStatus').innerText = "جاري مزامنة الملفات...";
 
             try {
-                // Fetch JSON
                 const jsonRes = await fetch(`https://api.github.com/repos/${repo}/contents/menu.json`, { headers: { 'Authorization': `token ${token}` }});
                 if (jsonRes.ok) {
                     const data = await jsonRes.json();
@@ -221,7 +206,6 @@
                     currentMenuData = JSON.parse(b64_to_utf8(data.content));
                 }
 
-                // Fetch HTML
                 const htmlRes = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`, { headers: { 'Authorization': `token ${token}` }});
                 if (htmlRes.ok) {
                     const data = await htmlRes.json();
@@ -232,12 +216,11 @@
                 document.getElementById('filesStatus').innerText = `تم ربط الملفات (JSON & HTML)`;
                 document.getElementById('filesStatus').classList.add('text-sky-400');
             } catch (err) {
-                document.getElementById('filesStatus').innerText = "فشل في جلب الملفات من المستودع";
+                document.getElementById('filesStatus').innerText = "فشل في جلب الملفات";
                 document.getElementById('filesStatus').classList.replace('text-slate-300', 'text-red-400');
             }
         }
 
-        // --- Image Selection (Vision) ---
         function handleImageSelection(event) {
             const files = event.target.files;
             const container = document.getElementById('imagePreviewContainer');
@@ -248,8 +231,6 @@
                 reader.onload = (e) => {
                     const base64String = e.target.result.split(',')[1];
                     const mimeType = file.type;
-                    
-                    // Format required by Interactions API
                     selectedImagesBase64.push({ type: "image", data: base64String, mime_type: mimeType });
                     
                     const img = document.createElement('div');
@@ -267,7 +248,6 @@
             event.target.value = '';
         }
 
-        // --- UI Update Function ---
         function appendMsg(role, content, badges = []) {
             const box = document.getElementById('chatMessages');
             const isUser = role === 'user';
@@ -293,7 +273,6 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        // --- Core Interactions API Engine ---
         async function handleExecution(e) {
             e.preventDefault();
             const inputEl = document.getElementById('userInput');
@@ -316,27 +295,27 @@
             document.getElementById('imagePreviewContainer').classList.add('hidden');
 
             try {
-                // 1. Prepare Interactions API Inputs
-                const systemInstruction = `أنت مهندس برمجيات (Full-Stack) متكامل وتدير موقعاً لمطعم.
-أمامك الآن قاعدة البيانات الحالية (menu.json) وكود واجهة الموقع (index.html).
+                // النظام الصارم والمعدل كلياً لمنع الهلوسة وحذف البيانات
+                const systemInstruction = `أنت مدير قاعدة بيانات ومصمم واجهات صارم جداً لمطعم.
+أمامك قاعدة البيانات (menu.json) وكود الموقع (index.html).
 
-[قاعدة البيانات الحالية]:
+[المنيو الحالي]:
 ${JSON.stringify(currentMenuData)}
 
-[كود واجهة الموقع الحالي]:
+[كود الموقع الحالي]:
 ${currentHtmlData}
 
-تعليماتك:
-1. نفذ طلبات المستخدم بناءً على البيانات والتصميم.
-2. إذا أرسل المستخدم صورة (مثل منيو), استخرج منها البيانات وأضفها لـ menu.json.
-3. يجب أن تُرجع النتيجة بصيغة JSON حصرية، لا تكتب أي نص خارج הJSON أبداً.`;
+قواعد التعديل الصارمة (تحذير: لا تخالفها أبداً):
+1. عند إضافة وجبة جديدة: أضفها إلى المصفوفة **مع الاحتفاظ بكافة الوجبات القديمة كما هي**. لا تحذف الوجبات أبداً إلا إذا طلب المستخدم صراحة "حذف وجبة كذا".
+2. لا تكتب أي أفكار، تحليلات، أو نصوص إنجليزية داخل حقول JSON (مثل price أو description). الحقول يجب أن تحتوي فقط على القيمة الفعلية للوجبة بشكل نظيف.
+3. تأكد من إضافة كافة الحقول للوجبة الجديدة: id, name, category, price, description.
+4. يجب أن تكون إجابتك بتنسيق JSON حقيقي فقط.`;
 
                 const aiInput = [];
                 aiInput.push({ type: "text", text: systemInstruction });
                 if (prompt) aiInput.push({ type: "text", text: prompt });
                 if (selectedImagesBase64.length > 0) aiInput.push(...selectedImagesBase64);
 
-                // 2. Structured Output Configuration for Interactions API
                 const requestBody = {
                     model: "gemini-3.6-flash",
                     input: aiInput,
@@ -346,10 +325,10 @@ ${currentHtmlData}
                         schema: {
                             type: "object",
                             properties: {
-                                reply: { type: "string", description: "شرح ودود لما تم تعديله" },
+                                reply: { type: "string", description: "شرح باللغة العربية لما قمت به" },
                                 updated_menu: { 
                                     type: "array", 
-                                    description: "مصفوفة المنيو المحدثة (ضعها null إذا لم يُطلب تعديل الوجبات)",
+                                    description: "مصفوفة المنيو الكاملة (تحتوي القديم والجديد). ضعها null إذا لم يُطلب تعديل الوجبات.",
                                     items: { type: "object", properties: { id: {type: "integer"}, name: {type: "string"}, category: {type: "string"}, price: {type: "string"}, description: {type: "string"} } }
                                 },
                                 updated_html: {
@@ -361,12 +340,10 @@ ${currentHtmlData}
                     }
                 };
 
-                // Add state history ID if conversation is ongoing
                 if (previousInteractionId) {
                     requestBody.previous_interaction_id = previousInteractionId;
                 }
 
-                // 3. Network Request to Interactions API
                 const url = `https://generativelanguage.googleapis.com/v1beta/interactions?key=${geminiKey}`;
                 const res = await fetch(url, {
                     method: 'POST',
@@ -377,11 +354,8 @@ ${currentHtmlData}
                 const data = await res.json();
                 
                 if (!res.ok) throw new Error(data.error?.message || "فشل الاتصال بـ API");
-
-                // Save Interaction ID
                 if (data.id) previousInteractionId = data.id;
 
-                // 4. Parse the `steps` array based on Interactions API structure
                 let replyText = "";
                 if (data.steps && data.steps.length > 0) {
                     for (const step of data.steps) {
@@ -397,15 +371,19 @@ ${currentHtmlData}
 
                 if (!replyText) throw new Error("استجابة الذكاء الاصطناعي كانت فارغة.");
 
-                // 5. Extract JSON carefully
                 const jsonMatch = replyText.match(/\{[\s\S]*\}/);
                 if (!jsonMatch) throw new Error("لم يتم إرجاع صيغة JSON صالحة.");
                 
                 const parsedResult = JSON.parse(jsonMatch[0]);
                 let updateBadges = [];
 
-                // 6. Update menu.json on GitHub
                 if (parsedResult.updated_menu && Array.isArray(parsedResult.updated_menu)) {
+                    // حماية إضافية: إذا كان التحديث الجديد أصغر من القديم ولم يطلب المستخدم الحذف
+                    if (parsedResult.updated_menu.length < currentMenuData.length && !prompt.includes("احذف") && !prompt.includes("شيل")) {
+                        console.warn("تم منع حذف الوجبات لأن المستخدم لم يطلب الحذف صراحة.");
+                        parsedResult.updated_menu = [...currentMenuData, ...parsedResult.updated_menu.filter(newItem => !currentMenuData.some(oldItem => oldItem.name === newItem.name))];
+                    }
+
                     if (JSON.stringify(currentMenuData) !== JSON.stringify(parsedResult.updated_menu)) {
                         currentMenuData = parsedResult.updated_menu;
                         const ghRes = await fetch(`https://api.github.com/repos/${repo}/contents/menu.json`, {
@@ -419,11 +397,10 @@ ${currentHtmlData}
                         });
                         const ghData = await ghRes.json();
                         currentMenuSha = ghData.content.sha;
-                        updateBadges.push("تم تعديل قاعدة البيانات 🗄️");
+                        updateBadges.push("تم تعديل المنيو بنجاح 🗄️");
                     }
                 }
 
-                // 7. Update index.html on GitHub
                 if (parsedResult.updated_html && typeof parsedResult.updated_html === 'string') {
                     if (currentHtmlData !== parsedResult.updated_html) {
                         currentHtmlData = parsedResult.updated_html;
@@ -442,10 +419,10 @@ ${currentHtmlData}
                     }
                 }
 
-                if (updateBadges.length === 0) updateBadges.push("تم الرد بنجاح (بدون تغييرات برمجية)");
+                if (updateBadges.length === 0) updateBadges.push("تم الرد بنجاح (بدون تغييرات)");
 
                 appendMsg('model', parsedResult.reply, updateBadges);
-                if (updateBadges.length > 0 && updateBadges[0] !== "تم الرد بنجاح (بدون تغييرات برمجية)") {
+                if (updateBadges.length > 0 && updateBadges[0] !== "تم الرد بنجاح (بدون تغييرات)") {
                     showToast('تم تطبيق التعديلات ورفعها', 'success');
                 }
 
@@ -453,7 +430,7 @@ ${currentHtmlData}
                 appendMsg('model', `❌ فشل في التنفيذ: ${err.message}`);
                 showToast('حدث خطأ', 'error');
             } finally {
-                selectedImagesBase64 = []; // Reset images
+                selectedImagesBase64 = []; 
                 btnEl.disabled = false;
                 btnEl.innerHTML = `<span>تنفيذ</span><i class="fa-solid fa-paper-plane"></i>`;
             }
