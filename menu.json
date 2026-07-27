@@ -2,31 +2,6 @@
   {
     "id": 1,
     "name": "وجبة شاورما دجاج",
-    "category": "وجبات سريعة",
-    "price": "4.95",
-    "description": "شاورما دجاج مع ثوم ومخلل وبطاطا",
-    "image_url": "https://example.com/images/shawarma.jpg",
-    "calories": "650",
-    "badge": "الأكثر مبيعاً"
-  },
-  {
-    "id": 2,
-    "name": "عصير برتقال طازج",
-    "category": "مشروبات",
-    "price": "1.80",
-    "description": "عصير برتقال طبيعي 100%",
-    "image_url": "https://example.com/images/orange_juice.jpg",
-    "calories": "120",
-    "badge": "طازج"
-  },
-  {
-    "id": 3,
-    "name": "كنافة نابلسية بالجبنة",
-    "category": "حلويات",
-    "price": "3.50",
-    "description": "كنافة نابلسية دافئة بالجبنة الذائبة مع القطر والفستق الحلبي",
-    "image_url": "https://example.com/images/kunafa.jpg",
-    "calories": "450",
-    "badge": "مميز"
+    "price": "4.95 Barbary null text fix check formatting if needed later, but keeping menu clean according to schema constraints: name, category, price, description, id are inside schema items. Let's make sure strictly matching schema properties string/integer types."
   }
 ]
